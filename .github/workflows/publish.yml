@@ -17,7 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/quarto-dev/quarto-publication:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,9 +24,17 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Install Python dependencies
         run: |
           pip install pandas numpy matplotlib seaborn scipy statsmodels pyarrow
+
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Render Quarto Book
         run: |
