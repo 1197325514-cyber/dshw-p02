@@ -1,0 +1,134 @@
+# 数据获取 {#sec-download}
+
+本章介绍如何使用Python和akshare获取金融数据。
+
+## 数据源选择
+
+本次作业选择 **akshare** 作为数据源，原因如下：
+
+- **免费**：无需注册，无需付费
+- **覆盖广**：涵盖股票、指数、基金、期货、外汇等多种金融数据
+- **接口简单**：Python API友好，便于程序化获取
+
+## 环境准备
+
+```python
+# 导入必要的库
+import akshare as ak
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# 打印版本信息
+print(f"akshare版本: {ak.__version__}")
+```
+
+## 股票数据下载
+
+### 股票列表定义
+
+选择覆盖7个行业的10只A股股票：
+
+```python
+stock_list = [
+    {"code": "600036", "name": "招商银行", "industry": "银行"},
+    {"code": "601398", "name": "工商银行", "industry": "银行"},
+    {"code": "002594", "name": "比亚迪", "industry": "汽车"},
+    {"code": "600104", "name": "上汽集团", "industry": "汽车"},
+    {"code": "000002", "name": "万科A", "industry": "房地产"},
+    {"code": "600519", "name": "贵州茅台", "industry": "白酒"},
+    {"code": "000858", "name": "五粮液", "industry": "白酒"},
+    {"code": "601857", "name": "中国石油", "industry": "能源"},
+    {"code": "000063", "name": "中兴通讯", "industry": "通讯"},
+    {"code": "002352", "name": "顺丰控股", "industry": "物流"},
+]
+```
+
+### 下载函数
+
+```python
+def download_stock_data(stock_code, start_date, end_date):
+    """下载单只股票的后复权日度行情数据"""
+    df = ak.stock_zh_a_hist(
+        symbol=stock_code,
+        period="daily",
+        start_date=start_date,
+        end_date=end_date,
+        adjust="hfq"  # 后复权
+    )
+    return df
+```
+
+### 下载结果
+
+| 股票 | 代码 | 数据行数 |
+|------|------|---------|
+| 招商银行 | 600036 | 1515 |
+| 工商银行 | 601398 | 1515 |
+| 比亚迪 | 002594 | 1515 |
+| 上汽集团 | 600104 | 1515 |
+| 万科A | 000002 | 1515 |
+| 贵州茅台 | 600519 | 1515 |
+| 五粮液 | 000858 | 1515 |
+| 中国石油 | 601857 | 1515 |
+| 中兴通讯 | 000063 | 1514 |
+| 顺丰控股 | 002352 | 1512 |
+
+## 指数数据下载
+
+下载沪深300和中证500指数数据：
+
+```python
+# 沪深300作为CAPM市场基准
+hs300 = ak.stock_zh_index_daily(symbol="sh000300")
+
+# 中证500代表中小盘股票
+zz500 = ak.stock_zh_index_daily(symbol="sh000905")
+```
+
+## 宏观数据下载
+
+### CPI同比增速
+
+```python
+cpi = ak.macro_china_cpi_yearly()
+```
+
+CPI同比增速反映通货膨胀水平，影响货币政策和股票估值。
+
+### M2同比增速
+
+```python
+m2 = ak.macro_china_m2_yearly()
+```
+
+M2同比增速反映货币供应量变化，与股市流动性密切相关。
+
+## 财务数据下载
+
+```python
+# 获取财务摘要数据
+finance = ak.stock_financial_abstract(symbol="600036")
+```
+
+财务指标包括ROE（净资产收益率）和净利润率，整理为长格式存储。
+
+## 下载日志
+
+所有下载操作均记录到 `download_log.txt` 文件中，格式如下：
+
+```
+[2026-04-07 22:23:02] SUCCESS  stock_600036  shape=(1515, 7)
+[2026-04-07 22:23:03] SUCCESS  stock_601398  shape=(1515, 7)
+```
+
+## 小结
+
+本章完成了以下数据获取工作：
+
+1. 10只A股股票的后复权日度行情数据
+2. 沪深300和中证500指数数据
+3. CPI和M2宏观经济指标
+4. 财务指标数据（ROE、净利润率）
+
+下一章将介绍数据清洗工作。

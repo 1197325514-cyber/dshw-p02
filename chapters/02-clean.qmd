@@ -1,0 +1,201 @@
+# 数据清洗 {#sec-clean}
+
+本章介绍数据清洗的完整流程，包括缺失值处理、日期格式统一、重复值删除、离群值标注等步骤。
+
+## 清洗流程概览
+
+| 清洗步骤 | 具体要求 |
+|---------|---------|
+| 缺失值检测 | 统计每列缺失值的数量和比例 |
+| 缺失值处理 | 向前填充（ffill）为主 |
+| 日期格式统一 | 转换为datetime64格式 |
+| 数据类型检查 | 确认价格、成交量为数值型 |
+| 重复值处理 | 检测并删除重复行 |
+| 离群值标注 | 标注涨跌幅超过±20%的记录 |
+
+## 缺失值检测
+
+```python
+# 统计缺失值
+for code, df in stock_data.items():
+    missing_count = df.isna().sum().sum()
+    print(f"{code}: 缺失值 {missing_count}")
+```
+
+### 检测结果
+
+本次数据无缺失值，数据质量良好。
+
+### 缺失值可能原因
+
+1. **停牌**：股票因重大事项停牌期间没有交易数据
+2. **节假日**：A股市场在法定节假日不开盘
+3. **数据源问题**：akshare接口可能存在数据缺失
+4. **新股上市**：部分股票可能在2020年后才上市
+
+## 缺失值处理
+
+采用向前填充（ffill）为主，向后填充（bfill）为辅的方法：
+
+```python
+# 向前填充
+df = df.ffill()
+
+# 如果仍有缺失值（开头部分），用向后填充
+df = df.bfill()
+```
+
+**处理理由**：向前填充使用历史数据填补当前缺失，不会引入未来信息，对于时间序列金融数据更为合适。
+
+## 日期格式统一
+
+```python
+# 转换为datetime格式
+df['date'] = pd.to_datetime(df['date'])
+
+# 设为索引
+df.set_index('date', inplace=True)
+```
+
+所有股票数据日期已统一为datetime64格式并设为索引。
+
+## 数据类型检查
+
+```python
+# 检查各列数据类型
+numeric_cols = ['open', 'close', 'high', 'low', 'volume', 'amount']
+for col in numeric_cols:
+    if df[col].dtype == 'object':
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+```
+
+所有数值列已确认为float64类型。
+
+## 重复值处理
+
+```python
+# 检测重复日期
+duplicates = df.index.duplicated().sum()
+
+# 删除重复行
+df = df[~df.index.duplicated(keep='first')]
+```
+
+本次数据无重复记录。
+
+## 离群值标注
+
+计算日收益率并标注极端波动：
+
+```python
+# 计算日收益率
+df['return'] = df['close'].pct_change()
+
+# 标注离群值（单日涨跌幅超过±20%）
+df['is_extreme'] = df['return'].abs() > 0.20
+```
+
+**极端波动原因分析**：
+
+- 涨跌停板限制：A股涨跌停限制为10%/20%
+- 复牌交易：长期停牌后复牌可能出现大幅波动
+- 市场异常：极端市场事件（如2020年初疫情冲击）
+
+## 宽表与长表转换
+
+### 创建宽表
+
+```python
+# 收盘价宽表：日期为索引，每列一只股票
+close_prices = {code: df['close'] for code, df in cleaned_stock_data.items()}
+wide_df = pd.DataFrame(close_prices)
+```
+
+### 转换为长表
+
+```python
+# 使用pd.melt转换
+long_df = wide_df.reset_index().melt(
+    id_vars='date',
+    var_name='code',
+    value_name='close'
+)
+```
+
+### 适用场景分析
+
+**宽表适用场景**：
+
+1. 多股票对比分析：直接比较不同股票在同一时点的价格
+2. 相关性分析：计算股票间的相关系数矩阵
+3. 可视化绑图：使用matplotlib绑制多股票走势图
+4. 投资组合分析：计算组合收益率、波动率等
+
+**长表适用场景**：
+
+1. 数据分组操作：按股票代码分组进行统计分析
+2. 数据库存储：符合数据库范式设计，便于SQL查询
+3. ggplot绑图：适合使用seaborn等工具绑制分面图
+4. 数据清洗：统一处理所有股票的缺失值、异常值
+5. 面板数据分析：适合固定效应模型等计量分析
+
+## 多表合并
+
+### 股票与指数合并
+
+```python
+# 将个股数据与沪深300数据按日期合并
+long_df = long_df.merge(hs300_data, on='date', how='left')
+```
+
+### 宏观数据合并
+
+```python
+# 添加年月列用于合并
+long_df['year_month'] = long_df['date'].dt.strftime('%Y-%m')
+
+# 合并CPI数据
+long_df = long_df.merge(cpi_df, on='year_month', how='left')
+```
+
+**频率处理**：宏观数据为月度，通过年月列映射到每个交易日。
+
+## 数据存储
+
+### CSV格式（基础）
+
+```python
+# 保存为CSV
+long_df.to_csv('data/combined/combined_data.csv', index=False)
+```
+
+### Parquet格式（进阶）
+
+```python
+# 保存为Parquet
+long_df.to_parquet('data/clean/stock_clean.parquet', index=False)
+```
+
+### 格式对比
+
+| 格式 | 文件大小 | 读取速度 | 类型安全 |
+|------|---------|---------|---------|
+| CSV | 1656.0 KB | 0.013s | 无 |
+| Parquet | 693.2 KB | 0.157s | 有 |
+
+**体积压缩率**：Parquet比CSV小约58%。
+
+## 小结
+
+本章完成了以下数据清洗工作：
+
+1. 缺失值检测与处理
+2. 日期格式统一
+3. 数据类型检查与转换
+4. 重复值处理
+5. 离群值标注
+6. 宽表与长表转换
+7. 多表合并
+8. 数据存储（CSV + Parquet）
+
+下一章将进行描述性统计与可视化分析。

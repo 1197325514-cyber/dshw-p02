@@ -1,0 +1,31 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "P01：金融数据获取、管理与初步分析"
+  author: "林川胜"
+  date: "2026年4月"
+  chapters:
+    - index.qmd
+    - chapters/01-download.qmd
+    - chapters/02-clean.qmd
+    - chapters/03-analysis.qmd
+    - chapters/04-capm.qmd
+    - summary.qmd
+
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+    code-tools: true
+    toc: true
+    number-sections: true
+    highlight-style: github
+
+execute:
+  freeze: auto
+
+language:
+  title-block-author-single: "作者"
+  title-block-published: "发布日期"

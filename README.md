@@ -174,6 +174,14 @@ jupyter nbconvert --to html 03_analysis.ipynb --output report.html
 
 https://github.com/1197325514-cyber/dshw-p01
 
+## 在线电子书
+
+本项目已发布为Quarto在线电子书：
+
+**https://1197325514-cyber.github.io/dshw-p01/**
+
+电子书包含完整的目录导航、各章节标题、图表和分析文字，排版整洁，便于阅读。
+
 ## 作者信息
 
 - 学号：25210071
