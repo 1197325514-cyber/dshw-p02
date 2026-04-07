@@ -1,0 +1,19 @@
+# 数据获取与处理
+akshare>=1.10.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# 数据存储
+pyarrow>=14.0.0
+
+# 可视化
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# 统计分析
+scipy>=1.11.0
+statsmodels>=0.14.0
+
+# Jupyter
+jupyter>=1.0.0
+nbconvert>=7.0.0
