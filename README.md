@@ -142,15 +142,11 @@ jupyter nbconvert --to html 03_analysis.ipynb --output report.html
 quarto render
 ```
 
-### 如何从头重建数据库
+### 关于SQLite说明
 
-如果需要重建SQLite数据库（方式C），请按以下步骤操作：
+本项目选择的进阶存储方案是 **Parquet（方式B）**，未作为主线实现 SQLite（方式C）。
 
-1. 确保已安装依赖：`pip install pyarrow pandas`
-2. 运行 `02_clean.ipynb` 中的数据库创建代码
-3. 数据库将自动创建于 `data/combined/fin_data.db`
-
-**注意**：`fin_data.db` 文件未上传至GitHub（已在.gitignore中配置），需要本地运行Notebook生成。
+如需扩展到方式C，可在 `02_clean.ipynb` 基础上新增数据库写入与 SQL 查询演示；当前作业主流程以 CSV + Parquet 为准。
 
 ## 数据文件上传说明
 

@@ -217,30 +217,50 @@ M2同比增速反映货币供应量变化，与股市流动性密切相关。货
 ### 获取财务指标
 
 ```python
-# 定义财务指标列表
-finance_indicators = ['ROE', '净利润率']
-all_finance_data = []
+# 从财务摘要中提取最近5个年度的 ROE 与净利润率
+indicator_map = {
+    "净资产收益率(ROE)": "ROE",
+    "销售净利率": "净利润率"
+}
+
+rows = []
 
 for stock in stock_list:
+    code = stock["code"]
     try:
-        # 获取财务摘要数据
-        df = ak.stock_financial_analysis_indicator(symbol=stock['code'])
+        df = ak.stock_financial_abstract(symbol=code)
+        # 仅保留“常用指标”分组，避免同名指标重复
+        df = df[df["选项"] == "常用指标"].copy()
 
-        # 筛选所需指标
-        for indicator in finance_indicators:
-            if indicator in df['指标名称'].values:
-                row = df[df['指标名称'] == indicator].iloc[0]
-                all_finance_data.append({
-                    'code': stock['code'],
-                    'name': stock['name'],
-                    'indicator': indicator,
-                    'value': row['值']
-                })
+        # 年报列：YYYY1231
+        annual_cols = sorted(
+            [c for c in df.columns if str(c).isdigit() and str(c).endswith("1231")],
+            reverse=True
+        )
+
+        # 每只股票取“最新可得”的5个年报年度（避免个别股票缺少最新年）
+        latest_annual_cols = annual_cols[:5]
+
+        for raw_name, std_name in indicator_map.items():
+            sub = df[df["指标"] == raw_name]
+            if sub.empty:
+                continue
+            s = sub.iloc[0]
+            for c in latest_annual_cols:
+                year = int(str(c)[:4])
+                value = pd.to_numeric(s[c], errors="coerce")
+                if pd.notna(value):
+                    rows.append({
+                        "code": code,
+                        "year": year,
+                        "indicator": std_name,
+                        "value": float(value)
+                    })
     except Exception as e:
         print(f"{stock['name']}: 财务数据获取失败 - {e}")
 
-# 转换为DataFrame并保存
-finance_df = pd.DataFrame(all_finance_data)
+finance_df = pd.DataFrame(rows)
+finance_df = finance_df.drop_duplicates(["code", "year", "indicator"])
 finance_df.to_csv("data/finance/finance_ratios.csv", index=False)
 ```
 
