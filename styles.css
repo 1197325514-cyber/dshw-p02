@@ -1,14 +1,142 @@
-/* 自定义样式 */
+/* ========================================
+   Quarto Book 自定义样式
+   ======================================== */
+
+/* -------------------- 侧边栏样式 -------------------- */
+
+/* 侧边栏整体 */
+#quarto-sidebar {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* 侧边栏标题 */
+.sidebar-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+/* 侧边栏工具栏 */
+.sidebar-tools-main {
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* 侧边栏搜索框 */
+.sidebar-search {
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.sidebar-search input {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dee2e6;
+  font-size: 0.9rem;
+}
+
+/* 侧边栏菜单项 */
+.sidebar-menu-container {
+  padding: 0 0.5rem;
+}
+
+.sidebar-item {
+  margin: 0.25rem 0;
+}
+
+.sidebar-item-text {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  display: block;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-item-text:hover {
+  background-color: #f8f9fa;
+  text-decoration: none;
+}
+
+/* 分区标题（part） */
+.sidebar-item-section > .sidebar-item-text {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-top: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* 章节项 */
+.sidebar-item-link {
+  color: #495057;
+  font-size: 0.95rem;
+  padding-left: 1.5rem;
+}
+
+.sidebar-item-link.active {
+  color: #3498db;
+  font-weight: 500;
+  background-color: #e8f4fd;
+}
+
+/* -------------------- 导航栏样式 -------------------- */
+
+.quarto-secondary-nav {
+  padding: 0.75rem 1.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.quarto-page-breadcrumbs {
+  font-size: 0.9rem;
+}
+
+/* -------------------- 内容区域样式 -------------------- */
+
+#quarto-content {
+  padding: 1.5rem;
+}
 
 /* 标题样式 */
 h1, h2, h3, h4, h5, h6 {
   color: #2c3e50;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+h1.title {
+  font-size: 2rem;
+  font-weight: 700;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 0.3rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* 段落样式 */
+p {
+  line-height: 1.8;
+  margin-bottom: 1rem;
 }
 
 /* 链接样式 */
 a {
   color: #3498db;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 a:hover {
@@ -16,119 +144,226 @@ a:hover {
   text-decoration: underline;
 }
 
-/* 代码块样式 */
+/* -------------------- 表格样式 -------------------- */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+table thead th {
+  background-color: #3498db;
+  color: white;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #2980b9;
+}
+
+table tbody td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+table tbody tr:hover {
+  background-color: #e8f4fd;
+}
+
+/* -------------------- 代码块样式 -------------------- */
+
 pre {
   background-color: #f8f9fa;
-  border-radius: 5px;
-  padding: 15px;
+  border-radius: 6px;
+  padding: 1rem;
   border: 1px solid #e9ecef;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 code {
   background-color: #f8f9fa;
-  padding: 2px 5px;
-  border-radius: 3px;
-  font-family: 'Consolas', 'Monaco', monospace;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
 }
 
-/* 表格样式 */
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 20px 0;
+pre code {
+  background-color: transparent;
+  padding: 0;
 }
 
-table th {
-  background-color: #3498db;
-  color: white;
-  padding: 12px;
-  text-align: left;
+/* 代码折叠按钮 */
+.code-fold-button {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
-table td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+.code-fold-button:hover {
+  background-color: #e9ecef;
 }
 
-table tr:hover {
-  background-color: #f5f5f5;
-}
+/* -------------------- 图片样式 -------------------- */
 
-/* 图片样式 */
 img {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 20px auto;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 5px;
-}
-
-/* 提示框样式 */
-.callout {
+  margin: 1.5rem auto;
   border-radius: 8px;
-  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* 数学公式样式 */
-.math {
-  font-size: 1.1em;
+figure {
+  margin: 1.5rem 0;
+  text-align: center;
 }
 
-/* 侧边栏样式 */
-.sidebar-item {
-  padding: 8px 15px;
-}
-
-.sidebar-item:hover {
-  background-color: #f0f0f0;
-}
-
-/* 页脚样式 */
-.page-footer {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-top: 1px solid #e9ecef;
-}
-
-/* 引用样式 */
-blockquote {
-  border-left: 4px solid #3498db;
-  padding-left: 20px;
-  margin: 20px 0;
-  color: #555;
+figure figcaption {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 0.5rem;
   font-style: italic;
 }
 
-/* 列表样式 */
+/* -------------------- Callout样式 -------------------- */
+
+.callout {
+  border-radius: 8px;
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid;
+}
+
+.callout-tip {
+  border-left-color: #28a745;
+  background-color: #f8fff8;
+}
+
+.callout-note {
+  border-left-color: #17a2b8;
+  background-color: #f8fcff;
+}
+
+.callout-warning {
+  border-left-color: #ffc107;
+  background-color: #fffef8;
+}
+
+.callout-important {
+  border-left-color: #dc3545;
+  background-color: #fff8f8;
+}
+
+.callout-header {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* -------------------- 引用样式 -------------------- */
+
+blockquote {
+  border-left: 4px solid #3498db;
+  padding: 0.5rem 1.25rem;
+  margin: 1.25rem 0;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-radius: 0 6px 6px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* -------------------- 列表样式 -------------------- */
+
 ul, ol {
-  margin: 15px 0;
-  padding-left: 25px;
+  margin: 1rem 0;
+  padding-left: 1.5rem;
 }
 
 li {
-  margin: 8px 0;
+  margin: 0.5rem 0;
+  line-height: 1.6;
 }
 
-/* 章节标题样式 */
-.quarto-title-banner {
-  background-color: #3498db;
-  color: white;
-  padding: 30px;
-  margin-bottom: 30px;
+/* -------------------- 页脚样式 -------------------- */
+
+.page-footer {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-top: 1px solid #dee2e6;
+  font-size: 0.9rem;
+  margin-top: 2rem;
 }
 
-/* 导航样式 */
-.navbar {
-  background-color: #2c3e50;
+/* -------------------- 数学公式样式 -------------------- */
+
+.math {
+  font-size: 1.05em;
 }
 
-/* 搜索框样式 */
-.sidebar-search {
-  margin: 15px 0;
+/* -------------------- 打印样式 -------------------- */
+
+@media print {
+  #quarto-sidebar {
+    display: none;
+  }
+
+  #quarto-content {
+    width: 100%;
+    padding: 0;
+  }
+
+  .callout {
+    border: 1px solid #dee2e6;
+  }
 }
 
-/* 分享按钮样式 */
-.quarto-navigation-tool {
-  margin: 0 5px;
+/* -------------------- 深色模式适配 -------------------- */
+
+[data-mode="dark"] {
+  --bs-body-bg: #1a1a2e;
+  --bs-body-color: #eee;
+}
+
+[data-mode="dark"] .sidebar-item-text:hover {
+  background-color: #2a2a3e;
+}
+
+[data-mode="dark"] table thead th {
+  background-color: #3a3a5e;
+}
+
+[data-mode="dark"] pre {
+  background-color: #2a2a3e;
+  border-color: #3a3a5e;
+}
+
+/* -------------------- 响应式适配 -------------------- */
+
+@media (max-width: 991.98px) {
+  #quarto-sidebar {
+    padding: 1rem;
+  }
+
+  .sidebar-title {
+    font-size: 1.2rem;
+  }
+
+  #quarto-content {
+    padding: 1rem;
+  }
 }

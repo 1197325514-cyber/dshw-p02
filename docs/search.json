@@ -76,7 +76,7 @@
     "section": "",
     "text": "1.1 数据源选择\n本章介绍如何使用Python和akshare获取金融数据，涵盖股票行情、市场指数、宏观经济指标和财务指标四类数据。\n本次作业选择 akshare 作为数据源，原因如下：\n其他可选数据源对比：",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -87,7 +87,7 @@
     "section": "",
     "text": "注意akshare优势\n\n\n\n\n免费：无需注册，无需付费，开箱即用\n覆盖广：涵盖股票、指数、基金、期货、外汇等多种金融数据\n接口简单：Python API友好，便于程序化获取\n社区活跃：持续更新，文档完善\n\n\n\n\n\n\n\n\n\n\n\n\n工具\n特点\n参考接口\n\n\n\n\nakshare\n免费，无需注册，覆盖广\nak.stock_zh_a_hist()\n\n\nbaostock\n免费，需登录，数据稳定\nbs.query_history_k_data_plus()\n\n\ntushare\n需注册获取token，数据丰富\npro.daily()",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -98,7 +98,7 @@
     "section": "1.2 环境准备",
     "text": "1.2 环境准备\n\n1.2.1 导入库\n# 导入必要的库\nimport akshare as ak\nimport pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport os\nimport logging\n\n# 打印版本信息\nprint(f\"akshare版本: {ak.__version__}\")\nprint(f\"pandas版本: {pd.__version__}\")\n\n\n1.2.2 创建目录结构\n使用Python代码自动创建项目目录结构：\n# 创建数据目录\ndirectories = [\n    'data/stock',\n    'data/index',\n    'data/macro',\n    'data/finance',\n    'data/clean',\n    'data/combined',\n    'output'\n]\n\nfor d in directories:\n    os.makedirs(d, exist_ok=True)\n    print(f\"创建目录: {d}\")",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -109,7 +109,7 @@
     "section": "1.3 股票数据下载",
     "text": "1.3 股票数据下载\n\n1.3.1 股票列表定义\n选择覆盖7个行业的10只A股股票：\nstock_list = [\n    {\"code\": \"600036\", \"name\": \"招商银行\", \"industry\": \"银行\"},\n    {\"code\": \"601398\", \"name\": \"工商银行\", \"industry\": \"银行\"},\n    {\"code\": \"002594\", \"name\": \"比亚迪\", \"industry\": \"汽车\"},\n    {\"code\": \"600104\", \"name\": \"上汽集团\", \"industry\": \"汽车\"},\n    {\"code\": \"000002\", \"name\": \"万科A\", \"industry\": \"房地产\"},\n    {\"code\": \"600519\", \"name\": \"贵州茅台\", \"industry\": \"白酒\"},\n    {\"code\": \"000858\", \"name\": \"五粮液\", \"industry\": \"白酒\"},\n    {\"code\": \"601857\", \"name\": \"中国石油\", \"industry\": \"能源\"},\n    {\"code\": \"000063\", \"name\": \"中兴通讯\", \"industry\": \"通讯\"},\n    {\"code\": \"002352\", \"name\": \"顺丰控股\", \"industry\": \"物流\"},\n]\n\n\n\n\n\n\n提示选股原则\n\n\n\n\n覆盖至少5个行业（实际覆盖7个）\n每个行业至多2只股票\n优先选择行业龙头，确保代表性和流动性\n\n\n\n\n\n1.3.2 下载函数\n定义带日志记录的下载函数：\ndef download_stock_data(stock_code, stock_name, start_date, end_date, log_file):\n    \"\"\"下载单只股票的后复权日度行情数据\"\"\"\n    try:\n        df = ak.stock_zh_a_hist(\n            symbol=stock_code,\n            period=\"daily\",\n            start_date=start_date,\n            end_date=end_date,\n            adjust=\"hfq\"  # 后复权\n        )\n\n        # 记录成功日志\n        timestamp = datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")\n        with open(log_file, 'a', encoding='utf-8') as f:\n            f.write(f\"[{timestamp}] SUCCESS  stock_{stock_code}  shape={df.shape}\\n\")\n\n        return df\n    except Exception as e:\n        # 记录失败日志\n        timestamp = datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")\n        with open(log_file, 'a', encoding='utf-8') as f:\n            f.write(f\"[{timestamp}] FAILED   stock_{stock_code}  Error: {str(e)}\\n\")\n        return None\n\n\n1.3.3 批量下载\nstart_date = \"20200101\"\nend_date = datetime.now().strftime(\"%Y%m%d\")\nlog_file = \"download_log.txt\"\n\nfor stock in stock_list:\n    df = download_stock_data(\n        stock['code'],\n        stock['name'],\n        start_date,\n        end_date,\n        log_file\n    )\n    if df is not None:\n        # 保存到CSV\n        df.to_csv(f\"data/stock/stock_{stock['code']}.csv\", index=False)\n        print(f\"{stock['name']}: 下载成功，{len(df)}条记录\")\n\n\n1.3.4 下载结果\n\n\n\n股票\n代码\n数据行数\n状态\n\n\n\n\n招商银行\n600036\n1515\n✓\n\n\n工商银行\n601398\n1515\n✓\n\n\n比亚迪\n002594\n1515\n✓\n\n\n上汽集团\n600104\n1515\n✓\n\n\n万科A\n000002\n1515\n✓\n\n\n贵州茅台\n600519\n1515\n✓\n\n\n五粮液\n000858\n1515\n✓\n\n\n中国石油\n601857\n1515\n✓\n\n\n中兴通讯\n000063\n1514\n✓\n\n\n顺丰控股\n002352\n1512\n✓",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -120,7 +120,7 @@
     "section": "1.4 指数数据下载",
     "text": "1.4 指数数据下载\n下载沪深300和中证500指数数据：\n# 沪深300作为CAPM市场基准\nhs300 = ak.stock_zh_index_daily(symbol=\"sh000300\")\nhs300.to_csv(\"data/index/index_000300.csv\", index=False)\nprint(f\"沪深300: {len(hs300)}条记录\")\n\n# 中证500代表中小盘股票\nzz500 = ak.stock_zh_index_daily(symbol=\"sh000905\")\nzz500.to_csv(\"data/index/index_000905.csv\", index=False)\nprint(f\"中证500: {len(zz500)}条记录\")\n\n1.4.1 指数选择说明\n\n\n\n指数\n代码\n用途\n\n\n\n\n沪深300\n000300\nCAPM模型市场基准，代表A股大盘股\n\n\n中证500\n000905\n代表A股中小盘股票，与沪深300形成互补",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -131,7 +131,7 @@
     "section": "1.5 宏观数据下载",
     "text": "1.5 宏观数据下载\n\n1.5.1 CPI同比增速\n# 下载CPI同比增速\ncpi = ak.macro_china_cpi_yearly()\ncpi.to_csv(\"data/macro/macro_cpi.csv\", index=False)\nprint(f\"CPI数据: {len(cpi)}条记录\")\n\n\n\n\n\n\n注意CPI与股市的关系\n\n\n\nCPI同比增速反映通货膨胀水平：\n\n高通胀：可能导致货币政策收紧，对股市形成压力\n低通胀：通常有利于股市表现\n行业差异：不同行业对通胀的敏感度不同\n\n\n\n\n\n1.5.2 M2同比增速\n# 下载M2同比增速\nm2 = ak.macro_china_m2_yearly()\nm2.to_csv(\"data/macro/macro_m2.csv\", index=False)\nprint(f\"M2数据: {len(m2)}条记录\")\nM2同比增速反映货币供应量变化，与股市流动性密切相关。货币供应增加通常利好股市。",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -142,7 +142,7 @@
     "section": "1.6 财务数据下载",
     "text": "1.6 财务数据下载\n\n1.6.1 获取财务指标\n# 定义财务指标列表\nfinance_indicators = ['ROE', '净利润率']\nall_finance_data = []\n\nfor stock in stock_list:\n    try:\n        # 获取财务摘要数据\n        df = ak.stock_financial_analysis_indicator(symbol=stock['code'])\n\n        # 筛选所需指标\n        for indicator in finance_indicators:\n            if indicator in df['指标名称'].values:\n                row = df[df['指标名称'] == indicator].iloc[0]\n                all_finance_data.append({\n                    'code': stock['code'],\n                    'name': stock['name'],\n                    'indicator': indicator,\n                    'value': row['值']\n                })\n    except Exception as e:\n        print(f\"{stock['name']}: 财务数据获取失败 - {e}\")\n\n# 转换为DataFrame并保存\nfinance_df = pd.DataFrame(all_finance_data)\nfinance_df.to_csv(\"data/finance/finance_ratios.csv\", index=False)\n\n\n1.6.2 财务数据格式\n财务指标整理为长格式（Long format）：\n\n\n\n字段\n说明\n\n\n\n\ncode\n股票代码\n\n\nyear\n年度\n\n\nindicator\n指标名称\n\n\nvalue\n指标值",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -153,7 +153,7 @@
     "section": "1.7 下载日志",
     "text": "1.7 下载日志\n所有下载操作均记录到 download_log.txt 文件中：\n[2026-04-07 22:23:02] SUCCESS  stock_600036  shape=(1515, 7)\n[2026-04-07 22:23:03] SUCCESS  stock_601398  shape=(1515, 7)\n[2026-04-07 22:23:05] SUCCESS  stock_002594  shape=(1515, 7)\n...\n日志格式说明：\n\n\n\n字段\n示例\n说明\n\n\n\n\n时间戳\n2026-04-07 22:23:02\n下载时间\n\n\n状态\nSUCCESS/FAILED\n下载结果\n\n\n数据标识\nstock_600036\n数据类型和代码\n\n\n详情\nshape=(1515, 7)\n数据维度或错误信息",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -164,7 +164,7 @@
     "section": "1.8 小结",
     "text": "1.8 小结\n本章完成了以下数据获取工作：\n\n\n\n数据类型\n数量\n来源\n时间范围\n\n\n\n\n股票行情\n10只\nakshare\n2020-01-01至今\n\n\n市场指数\n2只\nakshare\n同上\n\n\n宏观指标\n2项\nakshare\n月度数据\n\n\n财务指标\n2类\nakshare\n年度数据\n\n\n\n\n\n\n\n\n\n警告注意事项\n\n\n\n\nakshare接口可能因服务器维护而暂时不可用\n部分股票可能因停牌等原因数据不完整\n下载日志是问题排查的重要依据\n\n\n\n下一章将介绍数据清洗工作。",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
     ]
   },
@@ -175,7 +175,7 @@
     "section": "",
     "text": "2.1 清洗流程概览\n本章介绍数据清洗的完整流程，包括缺失值处理、日期格式统一、重复值删除、离群值标注等步骤。",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -186,7 +186,7 @@
     "section": "",
     "text": "步骤\n具体要求\n清洗前\n清洗后\n\n\n\n\n缺失值检测\n统计每列缺失值数量和比例\n见下表\n无缺失值\n\n\n缺失值处理\n向前填充（ffill）\n-\n已填充\n\n\n日期格式统一\n转换为datetime64格式\n字符串\ndatetime64\n\n\n数据类型检查\n确认为数值型\n已正确\n已正确\n\n\n重复值处理\n检测并删除重复行\n0条重复\n0条重复\n\n\n离群值标注\n标注涨跌幅&gt;±20%的记录\n未标注\n已标注",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -197,7 +197,7 @@
     "section": "2.2 缺失值检测",
     "text": "2.2 缺失值检测\n\n2.2.1 检测方法\n# 统计缺失值\nmissing_summary = {}\nfor code, df in stock_data.items():\n    missing_count = df.isna().sum().sum()\n    total_cells = df.shape[0] * df.shape[1]\n    missing_pct = missing_count / total_cells * 100\n    missing_summary[code] = {\n        'missing_count': missing_count,\n        'missing_pct': missing_pct\n    }\n    print(f\"{code}: 缺失值 {missing_count} ({missing_pct:.2f}%)\")\n\n\n2.2.2 检测结果\n\n\n\n股票代码\n缺失值数量\n缺失比例\n数据质量\n\n\n\n\n600036\n0\n0.00%\n优秀\n\n\n601398\n0\n0.00%\n优秀\n\n\n002594\n0\n0.00%\n优秀\n\n\n600104\n0\n0.00%\n优秀\n\n\n000002\n0\n0.00%\n优秀\n\n\n600519\n0\n0.00%\n优秀\n\n\n000858\n0\n0.00%\n优秀\n\n\n601857\n0\n0.00%\n优秀\n\n\n000063\n0\n0.00%\n优秀\n\n\n002352\n0\n0.00%\n优秀\n\n\n\n\n\n\n\n\n\n注意数据质量良好\n\n\n\n本次数据无缺失值，akshare数据源质量较高。但仍需了解缺失值的可能原因和处理方法。\n\n\n\n\n2.2.3 缺失值可能原因\n\n\n\n原因\n说明\n示例\n\n\n\n\n停牌\n股票因重大事项停牌期间没有交易数据\n重组、并购等\n\n\n节假日\nA股市场在法定节假日不开盘\n春节、国庆等\n\n\n数据源问题\nakshare接口可能存在数据缺失\n网络中断、服务器故障\n\n\n新股上市\n部分股票可能在2020年后才上市\n注册制新股",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -208,7 +208,7 @@
     "section": "2.3 缺失值处理",
     "text": "2.3 缺失值处理\n采用向前填充（ffill）为主，向后填充（bfill）为辅的方法：\ndef handle_missing_values(df):\n    \"\"\"处理缺失值\"\"\"\n    # 记录处理前的缺失值数量\n    before = df.isna().sum().sum()\n\n    # 向前填充（使用历史数据）\n    df = df.ffill()\n\n    # 如果仍有缺失值（开头部分），用向后填充\n    df = df.bfill()\n\n    # 记录处理后的缺失值数量\n    after = df.isna().sum().sum()\n\n    return df, before, after\n\n2.3.1 处理结果\n\n\n\n指标\n处理前\n处理后\n变化\n\n\n\n\n缺失值总数\n0\n0\n无变化\n\n\n数据行数\n1515\n1515\n无变化\n\n\n\n\n\n\n\n\n\n提示填充方法选择理由\n\n\n\n向前填充（ffill）更适合时间序列金融数据：\n\n使用历史数据填补当前缺失，不会引入未来信息\n保持价格/成交量的连续性\n避免人为制造的价格跳变\n\n向后填充（bfill）仅用于处理序列开头的缺失值。",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -219,7 +219,7 @@
     "section": "2.4 日期格式统一",
     "text": "2.4 日期格式统一\n\n2.4.1 统一方法\n# 转换为datetime格式\ndf['date'] = pd.to_datetime(df['date'])\n\n# 设为索引\ndf.set_index('date', inplace=True)\n\n# 验证日期格式\nprint(f\"日期类型: {df.index.dtype}\")\nprint(f\"日期范围: {df.index.min()} 至 {df.index.max()}\")\n\n\n2.4.2 统一结果\n\n\n\n项目\n统一前\n统一后\n\n\n\n\n数据类型\nobject（字符串）\ndatetime64[ns]\n\n\n日期格式\n‘2020-01-02’\n2020-01-02 00:00:00\n\n\n索引设置\n普通列\nDataFrame索引",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -230,7 +230,7 @@
     "section": "2.5 数据类型检查",
     "text": "2.5 数据类型检查\n\n2.5.1 检查方法\n# 检查各列数据类型\nnumeric_cols = ['open', 'close', 'high', 'low', 'volume', 'amount']\nfor col in numeric_cols:\n    if df[col].dtype == 'object':\n        df[col] = pd.to_numeric(df[col], errors='coerce')\n        print(f\"{col}: 字符串转换为数值型\")\n    else:\n        print(f\"{col}: 已是 {df[col].dtype} 类型\")\n\n\n2.5.2 检查结果\n\n\n\n列名\n数据类型\n说明\n\n\n\n\nopen\nfloat64\n开盘价\n\n\nclose\nfloat64\n收盘价\n\n\nhigh\nfloat64\n最高价\n\n\nlow\nfloat64\n最低价\n\n\nvolume\nfloat64\n成交量\n\n\namount\nfloat64\n成交额\n\n\n\n所有数值列已确认为float64类型，数据类型检查通过。",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -241,7 +241,7 @@
     "section": "2.6 重复值处理",
     "text": "2.6 重复值处理\n\n2.6.1 检测方法\n# 检测重复日期\nduplicates = df.index.duplicated().sum()\nprint(f\"重复日期数量: {duplicates}\")\n\n# 删除重复行（保留第一条）\nif duplicates &gt; 0:\n    df = df[~df.index.duplicated(keep='first')]\n    print(f\"已删除 {duplicates} 条重复记录\")\n\n\n2.6.2 处理结果\n\n\n\n股票代码\n重复记录数\n删除数量\n处理后行数\n\n\n\n\n600036\n0\n0\n1515\n\n\n601398\n0\n0\n1515\n\n\n002594\n0\n0\n1515\n\n\n600104\n0\n0\n1515\n\n\n000002\n0\n0\n1515\n\n\n600519\n0\n0\n1515\n\n\n000858\n0\n0\n1515\n\n\n601857\n0\n0\n1515\n\n\n000063\n0\n0\n1514\n\n\n002352\n0\n0\n1512\n\n\n\n本次数据无重复记录。",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -252,7 +252,7 @@
     "section": "2.7 离群值标注",
     "text": "2.7 离群值标注\n计算日收益率并标注极端波动：\n\n2.7.1 标注方法\n# 计算日收益率\ndf['return'] = df['close'].pct_change()\n\n# 标注离群值（单日涨跌幅超过±20%）\ndf['is_extreme'] = df['return'].abs() &gt; 0.20\n\n# 统计离群值\nextreme_count = df['is_extreme'].sum()\nprint(f\"极端波动记录: {extreme_count} 条 ({extreme_count/len(df)*100:.2f}%)\")\n\n\n2.7.2 标注结果\n\n\n\n股票代码\n极端波动天数\n占比\n\n\n\n\n600036\n0\n0.00%\n\n\n601398\n0\n0.00%\n\n\n002594\n2\n0.13%\n\n\n600104\n1\n0.07%\n\n\n000002\n3\n0.20%\n\n\n600519\n0\n0.00%\n\n\n000858\n0\n0.00%\n\n\n601857\n1\n0.07%\n\n\n000063\n2\n0.13%\n\n\n002352\n1\n0.07%\n\n\n\n\n\n\n\n\n\n警告极端波动原因分析\n\n\n\n\n涨跌停板限制：A股涨跌停限制为10%（主板）/20%（创业板、科创板）\n复牌交易：长期停牌后复牌可能出现大幅波动\n市场异常：极端市场事件（如2020年初疫情冲击）\n除权除息：分红派息后股价调整",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -263,7 +263,7 @@
     "section": "2.8 宽表与长表转换",
     "text": "2.8 宽表与长表转换\n\n2.8.1 创建宽表\n收盘价宽表：日期为索引，每列一只股票\n# 收盘价宽表\nclose_prices = {code: df['close'] for code, df in cleaned_stock_data.items()}\nwide_df = pd.DataFrame(close_prices)\nprint(f\"宽表维度: {wide_df.shape}\")\n宽表结构：\n\n\n\n日期\n招商银行\n工商银行\n比亚迪\n…\n\n\n\n\n2020-01-02\n35.21\n5.43\n45.67\n…\n\n\n2020-01-03\n35.45\n5.41\n46.12\n…\n\n\n\n\n\n2.8.2 转换为长表\n# 使用pd.melt转换\nlong_df = wide_df.reset_index().melt(\n    id_vars='date',\n    var_name='code',\n    value_name='close'\n)\nprint(f\"长表维度: {long_df.shape}\")\n长表结构：\n\n\n\ndate\ncode\nclose\n\n\n\n\n2020-01-02\n招商银行\n35.21\n\n\n2020-01-02\n工商银行\n5.43\n\n\n2020-01-02\n比亚迪\n45.67\n\n\n\n\n\n2.8.3 适用场景分析\n\n\n\n\n\n\n提示宽表 vs 长表\n\n\n\n宽表适用场景：\n\n多股票对比分析：直接比较不同股票在同一时点的价格\n相关性分析：计算股票间的相关系数矩阵\n可视化绑图：使用matplotlib绑制多股票走势图\n投资组合分析：计算组合收益率、波动率等\n\n长表适用场景：\n\n数据分组操作：按股票代码分组进行统计分析\n数据库存储：符合数据库范式设计，便于SQL查询\nggplot绑图：适合使用seaborn等工具绑制分面图\n数据清洗：统一处理所有股票的缺失值、异常值\n面板数据分析：适合固定效应模型等计量分析",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -274,7 +274,7 @@
     "section": "2.9 多表合并",
     "text": "2.9 多表合并\n\n2.9.1 股票与指数合并\n# 将个股数据与沪深300数据按日期合并\nlong_df = long_df.merge(\n    hs300_data[['date', 'close']],\n    on='date',\n    how='left',\n    suffixes=('', '_hs300')\n)\n合并结果：\n\n\n\n合并前行数\n合并后行数\n变化\n\n\n\n\n15150\n15150\n无变化\n\n\n\n\n\n2.9.2 宏观数据合并\n# 添加年月列用于合并\nlong_df['year_month'] = long_df['date'].dt.strftime('%Y-%m')\n\n# 合并CPI数据\nlong_df = long_df.merge(\n    cpi_df,\n    on='year_month',\n    how='left'\n)\n\n\n\n\n\n\n注意频率处理\n\n\n\n宏观数据为月度，股票数据为日度。处理方法：\n\n将月度宏观数据映射到对应月份的每个交易日\n使用year_month列进行合并\n同一月份的所有交易日共享同一个宏观指标值",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -285,7 +285,7 @@
     "section": "2.10 数据存储",
     "text": "2.10 数据存储\n\n2.10.1 CSV格式（基础）\n# 保存为CSV\nlong_df.to_csv('data/combined/combined_data.csv', index=False)\n\n\n2.10.2 Parquet格式（进阶）\n# 保存为Parquet\nlong_df.to_parquet('data/clean/stock_clean.parquet', index=False)\n\n\n2.10.3 格式对比\nimport time\n\n# CSV读取测试\nt0 = time.time()\ndf_csv = pd.read_csv(\"data/clean/stock_clean.csv\")\ncsv_time = time.time() - t0\ncsv_size = os.path.getsize('data/clean/stock_clean.csv') / 1024\n\n# Parquet读取测试\nt0 = time.time()\ndf_parquet = pd.read_parquet(\"data/clean/stock_clean.parquet\")\nparquet_time = time.time() - t0\nparquet_size = os.path.getsize('data/clean/stock_clean.parquet') / 1024\n\nprint(f\"CSV:   读取耗时 {csv_time:.3f}s, 文件大小 {csv_size:.1f} KB\")\nprint(f\"Parquet: 读取耗时 {parquet_time:.3f}s, 文件大小 {parquet_size:.1f} KB\")\n\n\n\n格式\n文件大小\n读取速度\n类型安全\n列式读取\n\n\n\n\nCSV\n1656.0 KB\n0.013s\n无\n不支持\n\n\nParquet\n693.2 KB\n0.157s\n有\n支持\n\n\n\n体积压缩率：Parquet比CSV小约58%。\n\n\n\n\n\n\n重要本次数据规模下的格式差异\n\n\n\n\n文件体积：Parquet明显更小（58%压缩率）\n读取速度：CSV更快（数据量小）\n应用建议：大数据场景下Parquet优势更明显\n\n何时选择Parquet：\n\n数据量超过1GB\n需要频繁读取部分列\n需要与其他大数据工具（Spark）集成\n需要保留Schema信息",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -296,7 +296,7 @@
     "section": "2.11 小结",
     "text": "2.11 小结\n本章完成了以下数据清洗工作：\n\n\n\n步骤\n清洗前\n清洗后\n变化说明\n\n\n\n\n缺失值检测\n-\n0个缺失值\n数据质量良好\n\n\n日期格式\n字符串\ndatetime64\n便于时间序列分析\n\n\n数据类型\n已正确\n已正确\n无需转换\n\n\n重复值\n0条\n0条\n无重复记录\n\n\n离群值\n未标注\n已标注\n添加is_extreme列\n\n\n宽表长表\n分离\n已转换\n便于不同分析\n\n\n多表合并\n分散\n已合并\n综合数据集\n\n\n数据存储\n-\nCSV+Parquet\n双格式存储\n\n\n\n下一章将进行描述性统计与可视化分析。",
     "crumbs": [
-      "数据篇",
+      "**数据篇**",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
     ]
   },
@@ -307,7 +307,7 @@
     "section": "",
     "text": "3.1 收益率计算\n本章进行日收益率的描述性统计分析和可视化工作，揭示各股票的风险收益特征。",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
     ]
   },
@@ -318,7 +318,7 @@
     "section": "",
     "text": "3.1.1 对数收益率公式\n使用对数收益率计算公式：\n\\[r_t = \\ln\\left(\\frac{P_t}{P_{t-1}}\\right) = \\ln(P_t) - \\ln(P_{t-1})\\]\n\n\n3.1.2 计算代码\n# 计算对数收益率\nstock_data['log_return'] = np.log(stock_data['close'] / stock_data['close'].shift(1))\n\n\n\n\n\n\n注意为什么使用对数收益率？\n\n\n\n\n可加性：多期收益率可直接相加\n正态性：对数收益率更接近正态分布\n对称性：涨跌幅度对称（+10%后跌-10%不等于0，但对数收益率对称）\n数学便利：便于统计建模和风险分析",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
     ]
   },
@@ -329,7 +329,7 @@
     "section": "3.2 基本统计量",
     "text": "3.2 基本统计量\n\n3.2.1 统计量定义\n\n\n\n统计量\n公式\n含义\n\n\n\n\n年化均值\n\\(\\bar{r} \\times 252\\)\n年均收益率水平\n\n\n年化波动率\n\\(\\sigma \\times \\sqrt{252}\\)\n收益率离散程度\n\n\n偏度\n\\(E[(r-\\mu)^3] / \\sigma^3\\)\n分布不对称性\n\n\n峰度\n\\(E[(r-\\mu)^4] / \\sigma^4 - 3\\)\n分布尖峰程度\n\n\n最大回撤\n\\(\\max(P_t - P_{peak}) / P_{peak}\\)\n最大亏损幅度\n\n\n\n\n\n3.2.2 描述性统计结果\n\n\n\n股票\n行业\n年化均值\n年化波动率\n偏度\n峰度\n最大回撤\n\n\n\n\n比亚迪\n汽车\n30.31%\n42.88%\n0.305\n2.099\n-55.73%\n\n\n中国石油\n能源\n11.61%\n19.32%\n0.275\n5.579\n-22.99%\n\n\n工商银行\n银行\n5.54%\n10.23%\n0.495\n6.581\n-14.39%\n\n\n贵州茅台\n白酒\n6.24%\n25.69%\n0.200\n3.512\n-51.12%\n\n\n招商银行\n银行\n3.73%\n23.35%\n0.258\n3.492\n-48.42%\n\n\n顺丰控股\n物流\n0.15%\n30.73%\n0.341\n3.558\n-74.23%\n\n\n中兴通讯\n通讯\n-0.37%\n40.27%\n0.307\n2.524\n-67.91%\n\n\n五粮液\n白酒\n-0.53%\n31.79%\n0.001\n3.342\n-70.14%\n\n\n上汽集团\n汽车\n-3.95%\n19.34%\n0.407\n5.786\n-40.60%\n\n\n万科A\n房地产\n-17.99%\n23.18%\n0.584\n3.719\n-71.43%\n\n\n\n\n\n3.2.3 统计量解读\n\n\n\n\n\n\n提示年化均值解读\n\n\n\n高收益股票：\n\n比亚迪（30.31%）：受益于新能源汽车行业高速发展，政策支持力度大\n中国石油（11.61%）：能源价格高企，国企改革推进\n\n低收益股票：\n\n万科A（-17.99%）：受房地产行业下行影响，政策调控持续\n上汽集团（-3.95%）：传统汽车行业转型压力，新能源转型不及预期\n\n\n\n\n\n\n\n\n\n警告年化波动率解读\n\n\n\n高波动股票：\n\n比亚迪（42.88%）：成长股特征明显，市场情绪波动大\n中兴通讯（40.27%）：行业竞争激烈，技术迭代快\n\n低波动股票：\n\n工商银行（10.23%）：国有大行，防御性较强\n中国石油（19.32%）：能源行业相对稳定\n\n银行股整体波动率较低，体现防御性特征。\n\n\n\n\n\n\n\n\n重要最大回撤解读\n\n\n\n高回撤股票：\n\n顺丰控股（-74.23%）：行业竞争加剧，价格战影响盈利\n五粮液（-70.14%）：消费降级担忧，估值回调\n万科A（-71.43%）：房地产信用危机\n\n低回撤股票：\n\n工商银行（-14.39%）：抗风险能力强，国有大行安全边际高\n中国石油（-22.99%）：能源刚需，现金流稳定",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
     ]
   },
@@ -340,7 +340,7 @@
     "section": "3.3 可视化分析",
     "text": "3.3 可视化分析\n\n3.3.1 图1：归一化收盘价走势图\n\n\n\n归一化收盘价走势图\n\n\n图1解读：\n\n\n\n\n\n\n注意整体趋势分析\n\n\n\n2020-2021年：A股市场整体上涨，白酒、新能源板块表现突出\n2022年：市场回调，房地产、银行板块承压\n2023-2024年：结构性行情，AI、新能源轮动\n2025年至今：市场震荡，板块分化明显\n\n\n行业表现差异：\n\n白酒行业（茅台、五粮液）：长期表现稳健，但2022年后有所回调\n汽车行业（比亚迪）：新能源概念驱动，波动较大但涨幅可观\n银行行业（招行、工行）：相对稳健，波动较小\n房地产行业（万科）：受政策影响，表现较弱\n\n\n\n3.3.2 图2：日收益率分布图\n\n\n\n日收益率分布图\n\n\n图2解读：\n分布形态：大部分股票收益率分布接近正态，但呈现尖峰厚尾特征。\n收益率集中度：\n\n大部分日收益率集中在±3%范围内\n银行股收益率分布更集中，波动较小\n汽车股、成长股收益率分布更分散\n\n与正态分布的差异：\n\n红色正态曲线与实际分布存在差异\n实际分布尾部更厚，说明极端事件概率更高\n峰度&gt;0表明分布比正态分布更尖\n\n\n\n3.3.3 图3：收益率相关系数热力图\n\n\n\n相关系数热力图\n\n\n图3解读：\n同行业相关性：\n\n银行股（招行、工行）：相关系数较高，同行业联动明显\n白酒股（茅台、五粮液）：相关系数较高，消费板块联动\n\n跨行业相关性：\n\n不同行业间相关性相对较低\n银行与白酒、银行与汽车的相关性中等\n能源与消费类股票相关性较低\n\n\n\n\n\n\n\n提示投资组合启示\n\n\n\n分散化效果：\n\n跨行业配置可以有效分散风险\n同行业股票不宜过度集中配置\n建议配置：银行（防御）+ 白酒（消费）+ 能源（周期）\n\n相关性应用：\n\n高相关性股票可作为替代品\n低相关性股票适合组合分散化\n关注行业轮动机会\n\n\n\n\n\n3.3.4 图4：CPI与股市关系\n\n\n\nCPI与股市关系\n\n\n图4解读：\n相关系数分析：CPI与沪深300月度收益率存在一定相关性。\n经济含义解读：\n\nCPI反映通货膨胀水平，影响央行货币政策\n高通胀可能导致紧缩政策，对股市形成压力\n低通胀环境通常更有利于股市表现\n\n局限性：相关性不等于因果关系，股市受多种因素影响。\n\n\n3.3.5 图5：财务指标跨公司对比（选做）\n\n\n\nROE跨公司对比\n\n\n\n\n\nROE年度趋势\n\n\n图5解读：\n\n\n\n\n\n\n注意行业ROE水平差异\n\n\n\n高ROE行业：\n\n白酒行业（茅台、五粮液）：ROE水平最高，约25-35%，品牌溢价显著\n银行行业（招行、工行）：ROE稳定在10-15%，盈利模式成熟\n\n中等ROE行业：\n\n汽车行业（比亚迪、上汽）：比亚迪ROE波动大但上升趋势明显\n物流行业（顺丰）：ROE中等，行业竞争影响\n\n低ROE行业：\n\n房地产行业（万科）：ROE逐年下降，反映行业困境\n能源行业（中国石油）：ROE相对较低，受油价影响大\n\n\n\n投资启示：\n\n高ROE行业不一定有高股价表现，需结合估值分析\nROE趋势比绝对值更重要，上升趋势代表行业景气\n不同行业ROE不可简单比较，需结合行业特性",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
     ]
   },
@@ -351,7 +351,7 @@
     "section": "3.4 小结",
     "text": "3.4 小结\n本章完成了以下分析工作：\n\n\n\n分析内容\n主要发现\n\n\n\n\n描述性统计\n比亚迪收益最高，万科A收益最低，工商银行最稳健\n\n\n价格走势\n新能源板块表现突出，房地产持续承压\n\n\n收益分布\n呈现尖峰厚尾特征，极端事件概率高于正态\n\n\n相关性分析\n同行业相关性高，跨行业配置可分散风险\n\n\n宏观关系\nCPI与股市存在一定相关性\n\n\n财务分析\n白酒ROE最高，房地产ROE下降\n\n\n\n下一章将进行CAPM模型回归分析。",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
     ]
   },
@@ -362,7 +362,7 @@
     "section": "",
     "text": "4.1 CAPM模型介绍\n本章使用资本资产定价模型（CAPM）分析各股票的系统风险暴露，揭示周期性与防御性行业的风险特征。",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
     ]
   },
@@ -373,7 +373,7 @@
     "section": "",
     "text": "4.1.1 模型形式\nCAPM模型的基本形式：\n\\[r_{i,t} - r_f = \\alpha_i + \\beta_i (r_{m,t} - r_f) + \\varepsilon_{i,t}\\]\n其中：\n\n\n\n符号\n含义\n\n\n\n\n\\(r_{i,t}\\)\n个股日对数收益率\n\n\n\\(r_{m,t}\\)\n沪深300日对数收益率（市场基准）\n\n\n\\(r_f\\)\n无风险利率\n\n\n\\(\\alpha_i\\)\n超额收益（Alpha）\n\n\n\\(\\beta_i\\)\n系统风险系数（Beta）\n\n\n\\(\\varepsilon_{i,t}\\)\n残差项\n\n\n\n\n\n4.1.2 参数设定\n# 无风险利率设定\nrf_annual = 0.02  # 年化2.0%\nrf_daily = rf_annual / 252  # 日频换算\n\nprint(f\"无风险利率（年化）: {rf_annual*100:.1f}%\")\nprint(f\"无风险利率（日频）: {rf_daily*100:.4f}%\")\n\n\n\n\n\n\n注意无风险利率设定理由\n\n\n\n\n年化2.0%：参考中国10年期国债收益率\n日频换算：\\(r_f^{daily} = r_f^{annual} / 252\\)\n252个交易日：A股市场年均交易日数量\n\n\n\n\n\n4.1.3 Beta系数含义\n\n\n\nBeta范围\n风险特征\n投资含义\n\n\n\n\nβ &gt; 1.5\n高风险\n牛市涨幅大，熊市跌幅也大\n\n\n1.0 &lt; β ≤ 1.5\n中高风险\n市场敏感度高\n\n\n0.5 &lt; β ≤ 1.0\n中低风险\n与市场同步波动\n\n\nβ ≤ 0.5\n低风险\n防御性强，波动小",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
     ]
   },
@@ -384,7 +384,7 @@
     "section": "4.2 回归估计",
     "text": "4.2 回归估计\n\n4.2.1 数据准备\n# 计算超额收益\nstock_data['stock_excess'] = stock_data['log_return'] - rf_daily\nmarket_data['market_excess'] = market_data['market_return'] - rf_daily\n\n# 合并数据\nmerged_data = stock_data.merge(market_data, on='date', how='inner')\n\n\n4.2.2 OLS回归\nimport statsmodels.api as sm\n\n# 对每只股票进行回归\nresults = {}\nfor stock_name in stock_names:\n    stock_df = merged_data[merged_data['name'] == stock_name]\n\n    # 准备回归变量\n    X = sm.add_constant(stock_df['market_excess'])\n    y = stock_df['stock_excess']\n\n    # OLS估计\n    model = sm.OLS(y, X).fit()\n    results[stock_name] = model",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
     ]
   },
@@ -395,7 +395,7 @@
     "section": "4.3 回归结果",
     "text": "4.3 回归结果\n\n4.3.1 CAPM估计结果\n\n\n\n股票\n行业\n\\(\\hat{\\alpha}\\)\np值\n\\(\\hat{\\beta}\\)\n95% CI\n\\(R^2\\)\n\n\n\n\n比亚迪\n汽车\n0.00150\n0.034*\n1.2807\n[1.17, 1.39]\n0.3271\n\n\n五粮液\n白酒\n0.00009\n0.839\n1.2488\n[1.18, 1.32]\n0.5517\n\n\n中兴通讯\n通讯\n-0.00010\n0.878\n1.1580\n[1.05, 1.26]\n0.3175\n\n\n贵州茅台\n白酒\n0.00022\n0.554\n0.9618\n[0.90, 1.02]\n0.4977\n\n\n顺丰控股\n物流\n0.00027\n0.610\n0.8693\n[0.78, 0.95]\n0.2855\n\n\n招商银行\n银行\n0.00023\n0.511\n0.8196\n[0.76, 0.88]\n0.4449\n\n\n万科A\n房地产\n-0.00076\n0.057†\n0.6905\n[0.63, 0.75]\n0.3064\n\n\n上汽集团\n汽车\n-0.00017\n0.549\n0.5059\n[0.46, 0.55]\n0.3293\n\n\n中国石油\n能源\n0.00047\n0.171\n0.3479\n[0.29, 0.40]\n0.1331\n\n\n工商银行\n银行\n0.00011\n0.528\n0.1642\n[0.14, 0.19]\n0.1094\n\n\n\n注：† p&lt;0.1, * p&lt;0.05, ** p&lt;0.01, *** p&lt;0.001\n\n\n4.3.2 Beta系数点图\n\n\n\nBeta系数点图",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
     ]
   },
@@ -406,7 +406,7 @@
     "section": "4.4 结果讨论",
     "text": "4.4 结果讨论\n\n4.4.1 问题1：β&gt;1的股票分析\n\n\n\n\n\n\n提示周期性股票（β&gt;1，共3只）\n\n\n\n\n\n\n股票\n行业\nβ\n特征\n\n\n\n\n比亚迪\n汽车\n1.2807\n新能源龙头，成长性高\n\n\n五粮液\n白酒\n1.2488\n消费升级受益者\n\n\n中兴通讯\n通讯\n1.1580\n5G概念，技术驱动\n\n\n\n\n\n分析结论：\n\n这些股票的市场敏感度高于市场平均水平\n当市场上涨时，这些股票涨幅更大；当市场下跌时，跌幅也更大\n典型的周期性行业特征：汽车、通讯、白酒等\n这类股票适合牛市配置，但需要更强的风险承受能力\n\n\n\n\n\n\n\n警告防御性股票（β≤1，共7只）\n\n\n\n\n\n\n股票\n行业\nβ\n特征\n\n\n\n\n贵州茅台\n白酒\n0.9618\n消费龙头，品牌溢价\n\n\n顺丰控股\n物流\n0.8693\n行业龙头，竞争激烈\n\n\n招商银行\n银行\n0.8196\n零售银行代表\n\n\n万科A\n房地产\n0.6905\n行业调整中\n\n\n上汽集团\n汽车\n0.5059\n传统汽车转型\n\n\n中国石油\n能源\n0.3479\n能源巨头\n\n\n工商银行\n银行\n0.1642\n国有大行\n\n\n\n\n\n分析结论：\n\n这些股票的市场敏感度低于市场平均水平\n波动相对较小，具有一定的抗跌属性\n典型的防御性行业特征：银行、能源等\n这类股票适合熊市或震荡市配置\n\n与周期性/防御性行业分类的吻合度：\n\n\n\n行业\nβ范围\n分类\n吻合度\n\n\n\n\n汽车\n0.51-1.28\n周期性\n部分吻合（比亚迪周期，上汽防御）\n\n\n白酒\n0.96-1.25\n周期性\n基本吻合\n\n\n银行\n0.16-0.82\n防御性\n高度吻合\n\n\n能源\n0.35\n防御性\n高度吻合\n\n\n\n\n\n4.4.2 问题2：Alpha显著性分析\n\n\n\n\n\n\n重要Alpha显著意味着什么？\n\n\n\n理论背景：CAPM模型预测α应该等于零（或统计上不显著）\n正向Alpha（α&gt;0且显著）：\n\n股票收益超过了CAPM模型预测的水平\n可能存在市场低估或其他定价因子\n主动管理投资者追求的目标\n\n本样本结果：\n\n仅比亚迪的α在统计上显著（p=0.034 &lt; 0.05）\n大部分股票α不显著，说明市场相对有效\n比亚迪显著的正向Alpha反映新能源行业高增长\n\n\n\n各股票Alpha分析：\n\n\n\n股票\nα\np值\n显著性\n解读\n\n\n\n\n比亚迪\n+\n0.034\n*\n新能源行业超额收益\n\n\n万科A\n-\n0.057\n†\n行业下行压力，接近显著\n\n\n其他\n±\n&gt;0.1\n不显著\n市场定价有效\n\n\n\n\n\n4.4.3 问题3：R²分析\n\n\n\n\n\n\n注意R²的含义\n\n\n\n\nR²衡量：市场收益对个股收益的解释比例\nR²越高：个股走势与市场越同步\nR²越低：个股受特有因素影响越大\n\n\n\n\n\n\n指标\n股票\n行业\nR²\n解读\n\n\n\n\n最高\n五粮液\n白酒\n0.5517\n与市场高度同步\n\n\n次高\n贵州茅台\n白酒\n0.4977\n消费龙头代表性强\n\n\n最低\n工商银行\n银行\n0.1094\n受政策等特有因素影响\n\n\n次低\n中国石油\n能源\n0.1331\n受国际油价影响\n\n\n\nR²差异解释：\nR²高的原因：\n\n大盘股：与市场指数成分股重叠度高\n行业龙头：代表性强，与经济周期同步\n白酒行业：消费属性强，与经济景气度相关\n\nR²低的原因：\n\n银行股：受政策、利率等特有因素影响\n能源股：受国际油价等外部因素影响\n特殊事件：个别公司的重大事件影响\n\n\n\n\n\n\n\n提示投资启示\n\n\n\nR²高的股票：\n\n分散化效果较差\n与市场相关性高\n适合作为市场代表性资产\n\nR²低的股票：\n\n具有更好的分散化价值\n受特有因素影响大\n需要更多公司层面的研究",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
     ]
   },
@@ -417,7 +417,7 @@
     "section": "4.5 小结",
     "text": "4.5 小结\n本章完成了以下CAPM分析工作：\n\n\n\n分析内容\n主要发现\n\n\n\n\nBeta估计\n3只周期性（β&gt;1），7只防御性（β≤1）\n\n\nAlpha分析\n仅比亚迪的Alpha显著\n\n\nR²分析\n五粮液最高（0.55），工商银行最低（0.11）\n\n\n\n主要发现：\n\n周期性股票：比亚迪、五粮液、中兴通讯，适合牛市配置\n防御性股票：工商银行、中国石油，适合熊市或震荡市配置\n市场有效性：大部分Alpha不显著，A股市场定价相对有效\n分散化价值：低R²股票具有更好的组合分散化效果\n\n下一章将分析宏观指标对股票收益率的影响。",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
     ]
   },
@@ -428,7 +428,7 @@
     "section": "",
     "text": "5.1 模型设定\n本章分析宏观经济指标（CPI）对股票月度收益率的影响，探讨不同行业的敏感性差异。\n建立宏观指标对股票收益率的影响模型：\n\\[r_{i,t}^{\\text{月}} = \\alpha_i + \\gamma_i \\cdot X_t + \\varepsilon_{i,t}\\]\n其中：",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>宏观指标对股票收益率的影响</span>"
     ]
   },
@@ -439,7 +439,7 @@
     "section": "",
     "text": "符号\n含义\n\n\n\n\n\\(r_{i,t}^{\\text{月}}\\)\n股票月度对数收益率\n\n\n\\(X_t\\)\nCPI同比增速\n\n\n\\(\\gamma_i\\)\n宏观敏感系数\n\n\n\\(\\varepsilon_{i,t}\\)\n残差项\n\n\n\n\n\n\n\n\n\n注意模型选择理由\n\n\n\n选择CPI的原因：\n\nCPI反映通货膨胀水平\n影响央行货币政策决策\n与股市估值和盈利预期相关\n数据公开透明，易于获取\n\n其他可选宏观指标：\n\nM2同比增速：货币供应量\n人民币汇率：外汇影响\nLPR利率：资金成本\n工业增加值：实体经济景气度",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>宏观指标对股票收益率的影响</span>"
     ]
   },
@@ -450,7 +450,7 @@
     "section": "5.2 回归结果",
     "text": "5.2 回归结果\n\n5.2.1 CPI对股票收益率的影响\n\n\n\n股票\n行业\n\\(\\hat{\\gamma}\\)\np值\n\\(R^2\\)\n显著\n\n\n\n\n工商银行\n银行\n-0.0065\n0.001\n0.152\n***\n\n\n中国石油\n能源\n-0.0092\n0.060\n0.054\n†\n\n\n顺丰控股\n物流\n0.0173\n0.061\n0.054\n†\n\n\n招商银行\n银行\n-0.0082\n0.192\n0.026\nNo\n\n\n上汽集团\n汽车\n-0.0043\n0.345\n0.014\nNo\n\n\n五粮液\n白酒\n0.0084\n0.362\n0.013\nNo\n\n\n比亚迪\n汽车\n0.0074\n0.526\n0.006\nNo\n\n\n贵州茅台\n白酒\n0.0056\n0.456\n0.009\nNo\n\n\n中兴通讯\n通讯\n0.0005\n0.962\n0.000\nNo\n\n\n万科A\n房地产\n0.0014\n0.820\n0.001\nNo\n\n\n\n注：† p&lt;0.1, *** p&lt;0.01\n\n\n5.2.2 敏感性可视化\n\n\n\n宏观指标影响",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>宏观指标对股票收益率的影响</span>"
     ]
   },
@@ -461,7 +461,7 @@
     "section": "5.3 结果讨论",
     "text": "5.3 结果讨论\n\n5.3.1 1. 敏感性差异分析\n\n\n\n\n\n\n重要显著受CPI影响的股票\n\n\n\n工商银行（银行）：γ = -0.0065，p &lt; 0.01，高度显著\n\n银行业对利率政策高度敏感\nCPI上升预期导致货币政策收紧，影响银行盈利\n利率上升压缩银行利差\n\n中国石油（能源）：γ = -0.0092，p &lt; 0.1\n\n能源行业与宏观经济周期高度相关\nCPI波动反映经济景气程度\n油价与CPI存在联动关系\n\n顺丰控股（物流）：γ = 0.0173，p &lt; 0.1\n\n物流业与消费景气度相关\nCPI反映消费活跃程度\n电商发展带动物流需求\n\n\n\n\n\n\n\n\n\n警告不显著的股票\n\n\n\n白酒行业（茅台、五粮液）：\n\n消费刚性强，对宏观敏感度低\n品牌溢价抵御通胀压力\n高端消费群体受经济波动影响小\n\n房地产行业（万科）：\n\n受政策影响更大，CPI敏感度不显著\n行业处于调整期，其他因素主导\n\n汽车行业：\n\n影响渠道复杂，单一宏观指标解释力有限\n新能源转型带来结构性变化\n\n\n\n\n\n5.3.2 2. 经济逻辑分析\n\n\n\n\n\n\n提示正向影响（γ &gt; 0）\n\n\n\n经济机制：\n\nCPI上升反映经济活跃\n消费相关行业受益于通胀环境\n物流、通讯等行业与经济景气正相关\n\n受影响股票：\n\n顺丰控股（物流）：+0.0173\n五粮液（白酒）：+0.0084\n比亚迪（汽车）：+0.0074\n\n\n\n\n\n\n\n\n\n警告负向影响（γ &lt; 0）\n\n\n\n经济机制：\n\nCPI上升引发货币政策收紧预期\n银行、能源等周期性行业承压\n资金成本上升影响盈利\n\n受影响股票：\n\n中国石油（能源）：-0.0092\n招商银行（银行）：-0.0082\n工商银行（银行）：-0.0065\n\n\n\n\n\n5.3.3 3. 投资启示\n\n\n\n\n\n\n注意基于宏观环境的配置策略\n\n\n\n高通胀环境：\n\n增加防御性股票配置（白酒、消费）\n减少银行、能源等负向敏感行业\n关注通胀对冲资产\n\n低通胀环境：\n\n可增加周期性股票配置（银行、能源）\n关注政策宽松带来的机会\n布局物流等正向敏感行业\n\n行业轮动建议：\n\n关注CPI趋势变化\n提前调整行业配置权重\n结合多因素综合分析\n\n\n\n\n\n5.3.4 4. 风险提示\n\n\n\n\n\n\n重要分析局限性\n\n\n\n\n样本有限：仅5年数据，时间跨度较短\n单一指标：仅分析CPI，未考虑其他宏观因素\n相关性非因果：统计关系不代表因果关系\n历史不代表未来：过去的敏感性可能变化",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>宏观指标对股票收益率的影响</span>"
     ]
   },
@@ -472,7 +472,7 @@
     "section": "5.4 小结",
     "text": "5.4 小结\n本章完成了宏观指标对股票收益率的影响分析：\n\n\n\n分析内容\n主要发现\n\n\n\n\n敏感股票\n工商银行、中国石油、顺丰控股受CPI影响显著\n\n\n敏感方向\n银行能源负向敏感，物流正向敏感\n\n\n行业差异\n白酒行业敏感度最低\n\n\n\n主要发现：\n\n银行和能源行业：对CPI负向敏感，通胀压力下表现承压\n物流行业：对CPI正向敏感，经济景气时受益\n白酒行业：对宏观敏感度最低，具有防御属性\n\n投资建议：\n\n根据CPI趋势进行行业轮动\n高通胀期配置白酒等防御性股票\n低通胀期可增加银行、能源配置\n结合多因素综合判断",
     "crumbs": [
-      "分析篇",
+      "**分析篇**",
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>宏观指标对股票收益率的影响</span>"
     ]
   },

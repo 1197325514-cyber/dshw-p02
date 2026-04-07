@@ -7,50 +7,62 @@ book:
   author: "林川胜"
   date: "2026年4月"
   date-format: "YYYY年MM月"
+
+  sidebar:
+    title: "DS Homework"
+    style: floating
+    search: true
+    background: light
+    tools:
+      - icon: github
+        href: https://github.com/1197325514-cyber/dshw-p01
+      - icon: house-fill
+        href: https://1197325514-cyber.github.io/dshw-p01/
+
+  page-footer:
+    center: |
+      学号：25210071 | 作者：林川胜
+    right: |
+      课程：金融数据分析与建模
+
+  site-url: https://1197325514-cyber.github.io/dshw-p01/
+  repo-url: https://github.com/1197325514-cyber/dshw-p01
+  repo-actions: [edit, issue]
+
   chapters:
     - index.qmd
-    - part: "数据篇"
+    - part: "**数据篇**"
       chapters:
         - chapters/01-download.qmd
         - chapters/02-clean.qmd
-    - part: "分析篇"
+    - part: "**分析篇**"
       chapters:
         - chapters/03-analysis.qmd
         - chapters/04-capm.qmd
         - chapters/05-macro.qmd
     - summary.qmd
-  sidebar:
-    style: floating
-    search: true
-  sharing: [twitter, facebook, linkedin]
-  page-footer:
-    left: |
-      P01：金融数据获取、管理与初步分析
-    right: |
-      由Quarto构建
-  site-url: https://1197325514-cyber.github.io/dshw-p01/
-  repo-url: https://github.com/1197325514-cyber/dshw-p01
-  repo-actions: [edit, issue]
 
 format:
   html:
     theme:
       light: cosmo
-      dark: cyborg
+      dark: darkly
     css: styles.css
     toc: true
     toc-depth: 3
+    linestretch: 1.6
+    fontsize: 11.5pt
     number-sections: true
+    link-external-newwindow: true
+    highlight: true
+    highlight-style: atom-one
     code-fold: true
     code-summary: "显示代码"
-    code-tools: true
-    code-block-bg: true
-    highlight-style: github
-    df-print: paged
+    code-line-numbers: false
+    code-overflow: wrap
+    callout-appearance: default
     anchor-sections: true
     smooth-scroll: true
-    link-external-icon: true
-    link-external-newwindow: true
 
 execute:
   freeze: auto
