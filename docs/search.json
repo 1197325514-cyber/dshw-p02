@@ -1,0 +1,422 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "P01：金融数据获取、管理与初步分析",
+    "section": "",
+    "text": "前言\n本项目完成了A股市场10只股票的数据获取、清洗、存储与分析工作。",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#项目概述",
+    "href": "index.html#项目概述",
+    "title": "P01：金融数据获取、管理与初步分析",
+    "section": "项目概述",
+    "text": "项目概述\n本电子书记录了金融数据分析与建模课程作业的完整流程，涵盖：\n\n数据获取：使用akshare获取10只A股股票、市场指数、宏观经济指标和财务指标数据\n数据清洗：完成缺失值处理、日期格式统一、重复值删除、离群值标注等清洗工作\n数据存储：同时使用CSV和Parquet格式存储数据\n描述性统计：计算年化收益率、波动率、偏度、峰度、最大回撤等统计量\n可视化分析：绘制归一化价格走势图、收益率分布图、相关系数热力图等\nCAPM回归：估计各股票的Beta系数，分析周期性/防御性行业特征",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#股票列表",
+    "href": "index.html#股票列表",
+    "title": "P01：金融数据获取、管理与初步分析",
+    "section": "股票列表",
+    "text": "股票列表\n\n\n\n代码\n名称\n行业\n选股理由\n\n\n\n\n600036\n招商银行\n银行\n股份制银行龙头，零售业务领先\n\n\n601398\n工商银行\n银行\n国有大行代表，市值最大\n\n\n002594\n比亚迪\n汽车\n新能源汽车领军企业\n\n\n600104\n上汽集团\n汽车\n传统汽车制造龙头\n\n\n000002\n万科A\n房地产\n房地产开发龙头企业\n\n\n600519\n贵州茅台\n白酒\n白酒行业龙头，高端消费代表\n\n\n000858\n五粮液\n白酒\n浓香型白酒龙头\n\n\n601857\n中国石油\n能源\n能源行业龙头，油气开采\n\n\n000063\n中兴通讯\n通讯\n通信设备龙头企业\n\n\n002352\n顺丰控股\n物流\n快递物流龙头企业",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#数据来源",
+    "href": "index.html#数据来源",
+    "title": "P01：金融数据获取、管理与初步分析",
+    "section": "数据来源",
+    "text": "数据来源\n\n股票行情：akshare，后复权日度行情，2020-01-01至今\n市场指数：沪深300（CAPM基准）、中证500（中小盘代表）\n宏观指标：CPI同比增速、M2同比增速\n财务指标：ROE、净利润率",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#github仓库",
+    "href": "index.html#github仓库",
+    "title": "P01：金融数据获取、管理与初步分析",
+    "section": "GitHub仓库",
+    "text": "GitHub仓库\n项目代码：https://github.com/1197325514-cyber/dshw-p01\n\n作者：林川胜 | 学号：25210071 | 课程：金融数据分析与建模",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html",
+    "href": "chapters/01-download.html",
+    "title": "1  数据获取",
+    "section": "",
+    "text": "1.1 数据源选择\n本章介绍如何使用Python和akshare获取金融数据。\n本次作业选择 akshare 作为数据源，原因如下：",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html#数据源选择",
+    "href": "chapters/01-download.html#数据源选择",
+    "title": "1  数据获取",
+    "section": "",
+    "text": "免费：无需注册，无需付费\n覆盖广：涵盖股票、指数、基金、期货、外汇等多种金融数据\n接口简单：Python API友好，便于程序化获取",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html#环境准备",
+    "href": "chapters/01-download.html#环境准备",
+    "title": "1  数据获取",
+    "section": "1.2 环境准备",
+    "text": "1.2 环境准备\n# 导入必要的库\nimport akshare as ak\nimport pandas as pd\nimport numpy as np\nfrom datetime import datetime\n\n# 打印版本信息\nprint(f\"akshare版本: {ak.__version__}\")",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html#股票数据下载",
+    "href": "chapters/01-download.html#股票数据下载",
+    "title": "1  数据获取",
+    "section": "1.3 股票数据下载",
+    "text": "1.3 股票数据下载\n\n1.3.1 股票列表定义\n选择覆盖7个行业的10只A股股票：\nstock_list = [\n    {\"code\": \"600036\", \"name\": \"招商银行\", \"industry\": \"银行\"},\n    {\"code\": \"601398\", \"name\": \"工商银行\", \"industry\": \"银行\"},\n    {\"code\": \"002594\", \"name\": \"比亚迪\", \"industry\": \"汽车\"},\n    {\"code\": \"600104\", \"name\": \"上汽集团\", \"industry\": \"汽车\"},\n    {\"code\": \"000002\", \"name\": \"万科A\", \"industry\": \"房地产\"},\n    {\"code\": \"600519\", \"name\": \"贵州茅台\", \"industry\": \"白酒\"},\n    {\"code\": \"000858\", \"name\": \"五粮液\", \"industry\": \"白酒\"},\n    {\"code\": \"601857\", \"name\": \"中国石油\", \"industry\": \"能源\"},\n    {\"code\": \"000063\", \"name\": \"中兴通讯\", \"industry\": \"通讯\"},\n    {\"code\": \"002352\", \"name\": \"顺丰控股\", \"industry\": \"物流\"},\n]\n\n\n1.3.2 下载函数\ndef download_stock_data(stock_code, start_date, end_date):\n    \"\"\"下载单只股票的后复权日度行情数据\"\"\"\n    df = ak.stock_zh_a_hist(\n        symbol=stock_code,\n        period=\"daily\",\n        start_date=start_date,\n        end_date=end_date,\n        adjust=\"hfq\"  # 后复权\n    )\n    return df\n\n\n1.3.3 下载结果\n\n\n\n股票\n代码\n数据行数\n\n\n\n\n招商银行\n600036\n1515\n\n\n工商银行\n601398\n1515\n\n\n比亚迪\n002594\n1515\n\n\n上汽集团\n600104\n1515\n\n\n万科A\n000002\n1515\n\n\n贵州茅台\n600519\n1515\n\n\n五粮液\n000858\n1515\n\n\n中国石油\n601857\n1515\n\n\n中兴通讯\n000063\n1514\n\n\n顺丰控股\n002352\n1512",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html#指数数据下载",
+    "href": "chapters/01-download.html#指数数据下载",
+    "title": "1  数据获取",
+    "section": "1.4 指数数据下载",
+    "text": "1.4 指数数据下载\n下载沪深300和中证500指数数据：\n# 沪深300作为CAPM市场基准\nhs300 = ak.stock_zh_index_daily(symbol=\"sh000300\")\n\n# 中证500代表中小盘股票\nzz500 = ak.stock_zh_index_daily(symbol=\"sh000905\")",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html#宏观数据下载",
+    "href": "chapters/01-download.html#宏观数据下载",
+    "title": "1  数据获取",
+    "section": "1.5 宏观数据下载",
+    "text": "1.5 宏观数据下载\n\n1.5.1 CPI同比增速\ncpi = ak.macro_china_cpi_yearly()\nCPI同比增速反映通货膨胀水平，影响货币政策和股票估值。\n\n\n1.5.2 M2同比增速\nm2 = ak.macro_china_m2_yearly()\nM2同比增速反映货币供应量变化，与股市流动性密切相关。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html#财务数据下载",
+    "href": "chapters/01-download.html#财务数据下载",
+    "title": "1  数据获取",
+    "section": "1.6 财务数据下载",
+    "text": "1.6 财务数据下载\n# 获取财务摘要数据\nfinance = ak.stock_financial_abstract(symbol=\"600036\")\n财务指标包括ROE（净资产收益率）和净利润率，整理为长格式存储。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html#下载日志",
+    "href": "chapters/01-download.html#下载日志",
+    "title": "1  数据获取",
+    "section": "1.7 下载日志",
+    "text": "1.7 下载日志\n所有下载操作均记录到 download_log.txt 文件中，格式如下：\n[2026-04-07 22:23:02] SUCCESS  stock_600036  shape=(1515, 7)\n[2026-04-07 22:23:03] SUCCESS  stock_601398  shape=(1515, 7)",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-download.html#小结",
+    "href": "chapters/01-download.html#小结",
+    "title": "1  数据获取",
+    "section": "1.8 小结",
+    "text": "1.8 小结\n本章完成了以下数据获取工作：\n\n10只A股股票的后复权日度行情数据\n沪深300和中证500指数数据\nCPI和M2宏观经济指标\n财务指标数据（ROE、净利润率）\n\n下一章将介绍数据清洗工作。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>数据获取</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html",
+    "href": "chapters/02-clean.html",
+    "title": "2  数据清洗",
+    "section": "",
+    "text": "2.1 清洗流程概览\n本章介绍数据清洗的完整流程，包括缺失值处理、日期格式统一、重复值删除、离群值标注等步骤。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#清洗流程概览",
+    "href": "chapters/02-clean.html#清洗流程概览",
+    "title": "2  数据清洗",
+    "section": "",
+    "text": "清洗步骤\n具体要求\n\n\n\n\n缺失值检测\n统计每列缺失值的数量和比例\n\n\n缺失值处理\n向前填充（ffill）为主\n\n\n日期格式统一\n转换为datetime64格式\n\n\n数据类型检查\n确认价格、成交量为数值型\n\n\n重复值处理\n检测并删除重复行\n\n\n离群值标注\n标注涨跌幅超过±20%的记录",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#缺失值检测",
+    "href": "chapters/02-clean.html#缺失值检测",
+    "title": "2  数据清洗",
+    "section": "2.2 缺失值检测",
+    "text": "2.2 缺失值检测\n# 统计缺失值\nfor code, df in stock_data.items():\n    missing_count = df.isna().sum().sum()\n    print(f\"{code}: 缺失值 {missing_count}\")\n\n2.2.1 检测结果\n本次数据无缺失值，数据质量良好。\n\n\n2.2.2 缺失值可能原因\n\n停牌：股票因重大事项停牌期间没有交易数据\n节假日：A股市场在法定节假日不开盘\n数据源问题：akshare接口可能存在数据缺失\n新股上市：部分股票可能在2020年后才上市",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#缺失值处理",
+    "href": "chapters/02-clean.html#缺失值处理",
+    "title": "2  数据清洗",
+    "section": "2.3 缺失值处理",
+    "text": "2.3 缺失值处理\n采用向前填充（ffill）为主，向后填充（bfill）为辅的方法：\n# 向前填充\ndf = df.ffill()\n\n# 如果仍有缺失值（开头部分），用向后填充\ndf = df.bfill()\n处理理由：向前填充使用历史数据填补当前缺失，不会引入未来信息，对于时间序列金融数据更为合适。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#日期格式统一",
+    "href": "chapters/02-clean.html#日期格式统一",
+    "title": "2  数据清洗",
+    "section": "2.4 日期格式统一",
+    "text": "2.4 日期格式统一\n# 转换为datetime格式\ndf['date'] = pd.to_datetime(df['date'])\n\n# 设为索引\ndf.set_index('date', inplace=True)\n所有股票数据日期已统一为datetime64格式并设为索引。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#数据类型检查",
+    "href": "chapters/02-clean.html#数据类型检查",
+    "title": "2  数据清洗",
+    "section": "2.5 数据类型检查",
+    "text": "2.5 数据类型检查\n# 检查各列数据类型\nnumeric_cols = ['open', 'close', 'high', 'low', 'volume', 'amount']\nfor col in numeric_cols:\n    if df[col].dtype == 'object':\n        df[col] = pd.to_numeric(df[col], errors='coerce')\n所有数值列已确认为float64类型。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#重复值处理",
+    "href": "chapters/02-clean.html#重复值处理",
+    "title": "2  数据清洗",
+    "section": "2.6 重复值处理",
+    "text": "2.6 重复值处理\n# 检测重复日期\nduplicates = df.index.duplicated().sum()\n\n# 删除重复行\ndf = df[~df.index.duplicated(keep='first')]\n本次数据无重复记录。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#离群值标注",
+    "href": "chapters/02-clean.html#离群值标注",
+    "title": "2  数据清洗",
+    "section": "2.7 离群值标注",
+    "text": "2.7 离群值标注\n计算日收益率并标注极端波动：\n# 计算日收益率\ndf['return'] = df['close'].pct_change()\n\n# 标注离群值（单日涨跌幅超过±20%）\ndf['is_extreme'] = df['return'].abs() &gt; 0.20\n极端波动原因分析：\n\n涨跌停板限制：A股涨跌停限制为10%/20%\n复牌交易：长期停牌后复牌可能出现大幅波动\n市场异常：极端市场事件（如2020年初疫情冲击）",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#宽表与长表转换",
+    "href": "chapters/02-clean.html#宽表与长表转换",
+    "title": "2  数据清洗",
+    "section": "2.8 宽表与长表转换",
+    "text": "2.8 宽表与长表转换\n\n2.8.1 创建宽表\n# 收盘价宽表：日期为索引，每列一只股票\nclose_prices = {code: df['close'] for code, df in cleaned_stock_data.items()}\nwide_df = pd.DataFrame(close_prices)\n\n\n2.8.2 转换为长表\n# 使用pd.melt转换\nlong_df = wide_df.reset_index().melt(\n    id_vars='date',\n    var_name='code',\n    value_name='close'\n)\n\n\n2.8.3 适用场景分析\n宽表适用场景：\n\n多股票对比分析：直接比较不同股票在同一时点的价格\n相关性分析：计算股票间的相关系数矩阵\n可视化绑图：使用matplotlib绑制多股票走势图\n投资组合分析：计算组合收益率、波动率等\n\n长表适用场景：\n\n数据分组操作：按股票代码分组进行统计分析\n数据库存储：符合数据库范式设计，便于SQL查询\nggplot绑图：适合使用seaborn等工具绑制分面图\n数据清洗：统一处理所有股票的缺失值、异常值\n面板数据分析：适合固定效应模型等计量分析",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#多表合并",
+    "href": "chapters/02-clean.html#多表合并",
+    "title": "2  数据清洗",
+    "section": "2.9 多表合并",
+    "text": "2.9 多表合并\n\n2.9.1 股票与指数合并\n# 将个股数据与沪深300数据按日期合并\nlong_df = long_df.merge(hs300_data, on='date', how='left')\n\n\n2.9.2 宏观数据合并\n# 添加年月列用于合并\nlong_df['year_month'] = long_df['date'].dt.strftime('%Y-%m')\n\n# 合并CPI数据\nlong_df = long_df.merge(cpi_df, on='year_month', how='left')\n频率处理：宏观数据为月度，通过年月列映射到每个交易日。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#数据存储",
+    "href": "chapters/02-clean.html#数据存储",
+    "title": "2  数据清洗",
+    "section": "2.10 数据存储",
+    "text": "2.10 数据存储\n\n2.10.1 CSV格式（基础）\n# 保存为CSV\nlong_df.to_csv('data/combined/combined_data.csv', index=False)\n\n\n2.10.2 Parquet格式（进阶）\n# 保存为Parquet\nlong_df.to_parquet('data/clean/stock_clean.parquet', index=False)\n\n\n2.10.3 格式对比\n\n\n\n格式\n文件大小\n读取速度\n类型安全\n\n\n\n\nCSV\n1656.0 KB\n0.013s\n无\n\n\nParquet\n693.2 KB\n0.157s\n有\n\n\n\n体积压缩率：Parquet比CSV小约58%。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-clean.html#小结",
+    "href": "chapters/02-clean.html#小结",
+    "title": "2  数据清洗",
+    "section": "2.11 小结",
+    "text": "2.11 小结\n本章完成了以下数据清洗工作：\n\n缺失值检测与处理\n日期格式统一\n数据类型检查与转换\n重复值处理\n离群值标注\n宽表与长表转换\n多表合并\n数据存储（CSV + Parquet）\n\n下一章将进行描述性统计与可视化分析。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>数据清洗</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-analysis.html",
+    "href": "chapters/03-analysis.html",
+    "title": "3  描述性统计与可视化",
+    "section": "",
+    "text": "3.1 收益率计算\n本章进行日收益率的描述性统计分析和可视化工作。\n使用对数收益率计算公式：\n\\[r_t = \\ln\\left(\\frac{P_t}{P_{t-1}}\\right)\\]",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-analysis.html#收益率计算",
+    "href": "chapters/03-analysis.html#收益率计算",
+    "title": "3  描述性统计与可视化",
+    "section": "",
+    "text": "# 计算对数收益率\nstock_data['log_return'] = np.log(stock_data['close'] / stock_data['close'].shift(1))",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-analysis.html#基本统计量",
+    "href": "chapters/03-analysis.html#基本统计量",
+    "title": "3  描述性统计与可视化",
+    "section": "3.2 基本统计量",
+    "text": "3.2 基本统计量\n\n3.2.1 统计量定义\n\n\n\n统计量\n公式\n含义\n\n\n\n\n年化均值\n\\(\\bar{r} \\times 252\\)\n年均收益率水平\n\n\n年化波动率\n\\(\\sigma \\times \\sqrt{252}\\)\n收益率离散程度\n\n\n偏度\n\\(E[(r-\\mu)^3] / \\sigma^3\\)\n分布不对称性\n\n\n峰度\n\\(E[(r-\\mu)^4] / \\sigma^4 - 3\\)\n分布尖峰程度\n\n\n最大回撤\n\\(\\max(P_t - P_{peak}) / P_{peak}\\)\n最大亏损幅度\n\n\n\n\n\n3.2.2 描述性统计结果\n\n\n\n股票\n行业\n年化均值\n年化波动率\n偏度\n峰度\n最大回撤\n\n\n\n\n万科A\n房地产\n-17.99%\n23.18%\n0.584\n3.719\n-71.43%\n\n\n中兴通讯\n通讯\n-0.37%\n40.27%\n0.307\n2.524\n-67.91%\n\n\n五粮液\n白酒\n-0.53%\n31.79%\n0.001\n3.342\n-70.14%\n\n\n顺丰控股\n物流\n0.15%\n30.73%\n0.341\n3.558\n-74.23%\n\n\n比亚迪\n汽车\n30.31%\n42.88%\n0.305\n2.099\n-55.73%\n\n\n招商银行\n银行\n3.73%\n23.35%\n0.258\n3.492\n-48.42%\n\n\n上汽集团\n汽车\n-3.95%\n19.34%\n0.407\n5.786\n-40.60%\n\n\n贵州茅台\n白酒\n6.24%\n25.69%\n0.200\n3.512\n-51.12%\n\n\n工商银行\n银行\n5.54%\n10.23%\n0.495\n6.581\n-14.39%\n\n\n中国石油\n能源\n11.61%\n19.32%\n0.275\n5.579\n-22.99%\n\n\n\n\n\n3.2.3 统计量解读\n年化均值：\n\n比亚迪表现最佳（30.31%），受益于新能源汽车行业高速发展\n万科A表现最差（-17.99%），受房地产行业下行影响\n工商银行波动最小，收益稳健\n\n年化波动率：\n\n比亚迪波动率最高（42.88%），成长股特征明显\n工商银行波动率最低（10.23%），防御性较强\n银行股整体波动率较低\n\n最大回撤：\n\n顺丰控股回撤最大（-74.23%），行业竞争加剧\n工商银行回撤最小（-14.39%），抗风险能力强",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-analysis.html#可视化分析",
+    "href": "chapters/03-analysis.html#可视化分析",
+    "title": "3  描述性统计与可视化",
+    "section": "3.3 可视化分析",
+    "text": "3.3 可视化分析\n\n3.3.1 图1：归一化收盘价走势图\n\n\n\n归一化收盘价走势图\n\n\n图1解读：\n\n整体趋势：\n\n2020-2021年：A股市场整体上涨，白酒、新能源板块表现突出\n2022年：市场回调，房地产、银行板块承压\n2023-2024年：结构性行情，AI、新能源轮动\n\n行业表现差异：\n\n白酒行业（茅台、五粮液）：长期表现稳健，但2022年后有所回调\n汽车行业（比亚迪）：新能源概念驱动，波动较大但涨幅可观\n银行行业（招行、工行）：相对稳健，波动较小\n房地产行业（万科）：受政策影响，表现较弱\n\n与沪深300对比：部分股票跑赢沪深300，部分跑输\n\n\n\n3.3.2 图2：日收益率分布图\n\n\n\n日收益率分布图\n\n\n图2解读：\n\n分布形态：大部分股票收益率分布接近正态，但呈现尖峰厚尾特征\n收益率集中度：\n\n大部分日收益率集中在±3%范围内\n银行股收益率分布更集中，波动较小\n汽车股、成长股收益率分布更分散\n\n与正态分布的差异：\n\n红色正态曲线与实际分布存在差异\n实际分布尾部更厚，说明极端事件概率更高\n\n\n\n\n3.3.3 图3：收益率相关系数热力图\n\n\n\n相关系数热力图\n\n\n图3解读：\n\n同行业相关性：\n\n银行股（招行、工行）：相关系数较高，同行业联动明显\n白酒股（茅台、五粮液）：相关系数较高，消费板块联动\n\n跨行业相关性：\n\n不同行业间相关性相对较低\n银行与白酒、银行与汽车的相关性中等\n能源与消费类股票相关性较低\n\n投资组合启示：\n\n跨行业配置可以有效分散风险\n同行业股票不宜过度集中配置\n\n\n\n\n3.3.4 图4：CPI与股市关系\n\n\n\nCPI与股市关系\n\n\n图4解读：\n\n相关系数分析：CPI与沪深300月度收益率存在一定相关性\n经济含义解读：\n\nCPI反映通货膨胀水平，影响央行货币政策\n高通胀可能导致紧缩政策，对股市形成压力\n低通胀环境通常更有利于股市表现\n\n局限性：相关性不等于因果关系，股市受多种因素影响",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-analysis.html#小结",
+    "href": "chapters/03-analysis.html#小结",
+    "title": "3  描述性统计与可视化",
+    "section": "3.4 小结",
+    "text": "3.4 小结\n本章完成了以下分析工作：\n\n计算了10只股票的描述性统计量\n绘制了归一化价格走势图\n分析了收益率分布特征\n计算了股票间相关系数\n探讨了宏观指标与股市的关系\n\n下一章将进行CAPM模型回归分析。",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>描述性统计与可视化</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-capm.html",
+    "href": "chapters/04-capm.html",
+    "title": "4  CAPM模型回归分析",
+    "section": "",
+    "text": "4.1 CAPM模型介绍\n本章使用资本资产定价模型（CAPM）分析各股票的系统风险暴露。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-capm.html#capm模型介绍",
+    "href": "chapters/04-capm.html#capm模型介绍",
+    "title": "4  CAPM模型回归分析",
+    "section": "",
+    "text": "4.1.1 模型形式\nCAPM模型的基本形式：\n\\[r_{i,t} - r_f = \\alpha_i + \\beta_i (r_{m,t} - r_f) + \\varepsilon_{i,t}\\]\n其中：\n\n\\(r_{i,t}\\)：个股日对数收益率\n\\(r_{m,t}\\)：沪深300日对数收益率（市场基准）\n\\(r_f\\)：无风险利率\n\\(\\alpha_i\\)：超额收益（Alpha）\n\\(\\beta_i\\)：系统风险系数（Beta）\n\n\n\n4.1.2 参数设定\n\n无风险利率：年化2.0%，日频换算：\\(r_f^{daily} = 0.02 / 252\\)\n市场基准：沪深300指数\n\n# 无风险利率设定\nrf_annual = 0.02\nrf_daily = rf_annual / 252\n\nprint(f\"无风险利率（年化）: {rf_annual*100:.1f}%\")\nprint(f\"无风险利率（日频）: {rf_daily*100:.4f}%\")",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-capm.html#回归估计",
+    "href": "chapters/04-capm.html#回归估计",
+    "title": "4  CAPM模型回归分析",
+    "section": "4.2 回归估计",
+    "text": "4.2 回归估计\n\n4.2.1 数据准备\n# 计算超额收益\nstock_data['stock_excess'] = stock_data['log_return'] - rf_daily\nmarket_data['market_excess'] = market_data['market_return'] - rf_daily\n\n# OLS回归\nimport statsmodels.api as sm\nX = sm.add_constant(merged_data['market_excess'])\ny = merged_data['stock_excess']\nmodel = sm.OLS(y, X).fit()",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-capm.html#回归结果",
+    "href": "chapters/04-capm.html#回归结果",
+    "title": "4  CAPM模型回归分析",
+    "section": "4.3 回归结果",
+    "text": "4.3 回归结果\n\n4.3.1 CAPM估计结果\n\n\n\n\n\n\n\n\n\n\n\n\n股票\n行业\n\\(\\hat{\\alpha}\\)\np值\n\\(\\hat{\\beta}\\)\n95% CI\n\\(R^2\\)\n\n\n\n\n比亚迪\n汽车\n0.001497\n0.0339\n1.2807\n[1.15, 1.41]\n0.3271\n\n\n五粮液\n白酒\n0.000088\n0.8388\n1.2488\n[1.13, 1.37]\n0.5517\n\n\n中兴通讯\n通讯\n-0.000100\n0.8785\n1.1580\n[1.02, 1.30]\n0.3175\n\n\n贵州茅台\n白酒\n0.000220\n0.5537\n0.9618\n[0.85, 1.07]\n0.4977\n\n\n顺丰控股\n物流\n0.000269\n0.6096\n0.8693\n[0.74, 1.00]\n0.2855\n\n\n招商银行\n银行\n0.000231\n0.5115\n0.8196\n[0.71, 0.93]\n0.4449\n\n\n万科A\n房地产\n-0.000759\n0.0571\n0.6905\n[0.56, 0.82]\n0.3064\n\n\n上汽集团\n汽车\n-0.000166\n0.5487\n0.5059\n[0.41, 0.60]\n0.3293\n\n\n中国石油\n能源\n0.000467\n0.1709\n0.3479\n[0.25, 0.45]\n0.1331\n\n\n工商银行\n银行\n0.000113\n0.5283\n0.1642\n[0.09, 0.24]\n0.1094\n\n\n\n\n\n4.3.2 Beta系数点图\n\n\n\nBeta系数点图",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-capm.html#结果讨论",
+    "href": "chapters/04-capm.html#结果讨论",
+    "title": "4  CAPM模型回归分析",
+    "section": "4.4 结果讨论",
+    "text": "4.4 结果讨论\n\n4.4.1 问题1：β&gt;1的股票分析\nβ&gt;1的股票（周期性行业，共3只）：\n\n\n\n股票\n行业\nβ\n\n\n\n\n比亚迪\n汽车\n1.2807\n\n\n五粮液\n白酒\n1.2488\n\n\n中兴通讯\n通讯\n1.1580\n\n\n\n分析结论：\n\n这些股票的市场敏感度高于市场平均水平\n当市场上涨时，这些股票涨幅更大；当市场下跌时，跌幅也更大\n典型的周期性行业包括：汽车、通讯、白酒等\n这类股票适合牛市配置，但需要更强的风险承受能力\n\nβ≤1的股票（防御性行业，共7只）：\n\n\n\n股票\n行业\nβ\n\n\n\n\n贵州茅台\n白酒\n0.9618\n\n\n顺丰控股\n物流\n0.8693\n\n\n招商银行\n银行\n0.8196\n\n\n万科A\n房地产\n0.6905\n\n\n上汽集团\n汽车\n0.5059\n\n\n中国石油\n能源\n0.3479\n\n\n工商银行\n银行\n0.1642\n\n\n\n分析结论：\n\n这些股票的市场敏感度低于市场平均水平\n波动相对较小，具有一定的抗跌属性\n典型的防御性行业包括：银行、能源等\n这类股票适合熊市或震荡市配置\n\n\n\n4.4.2 问题2：Alpha显著性分析\nAlpha显著异于零的股票：\n仅有比亚迪的α在统计上显著（p=0.0339 &lt; 0.05）。\nAlpha显著意味着什么：\n\n理论背景：CAPM模型预测α应该等于零（或统计上不显著）\n正向Alpha（α&gt;0且显著）：\n\n股票收益超过了CAPM模型预测的水平\n可能存在市场低估或其他定价因子\n主动管理投资者追求的目标\n\n本样本结果分析：\n\n大部分股票α不显著，说明市场相对有效\n比亚迪显著的正向Alpha可能反映新能源行业高增长\n\n\n\n\n4.4.3 问题3：R²分析\n\n\n\n指标\n股票\n行业\nR²\n\n\n\n\n最高\n五粮液\n白酒\n0.5517\n\n\n最低\n工商银行\n银行\n0.1094\n\n\n\nR²差异解释：\n\nR²的含义：\n\nR²衡量市场收益对个股收益的解释比例\nR²越高，个股走势与市场越同步\nR²越低，个股受特有因素影响越大\n\nR²高的原因：\n\n大盘股：与市场指数成分股重叠度高\n行业龙头：代表性强，与经济周期同步\n\nR²低的原因：\n\n银行股：受政策、利率等特有因素影响\n能源股：受国际油价等外部因素影响\n\n投资启示：\n\nR²高的股票：分散化效果较差\nR²低的股票：具有更好的分散化价值",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-capm.html#小结",
+    "href": "chapters/04-capm.html#小结",
+    "title": "4  CAPM模型回归分析",
+    "section": "4.5 小结",
+    "text": "4.5 小结\n本章完成了以下CAPM分析工作：\n\n对10只股票估计了CAPM模型\n分析了周期性与防御性行业的Beta特征\n讨论了Alpha显著性和R²差异的经济含义\n提供了投资决策参考\n\n主要发现：\n\n比亚迪、五粮液、中兴通讯属于周期性股票（β&gt;1）\n工商银行、中国石油属于防御性股票（β&lt;0.5）\n仅比亚迪的Alpha在统计上显著\n五粮液的R²最高，工商银行的R²最低",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>CAPM模型回归分析</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "5  总结与结论",
+    "section": "",
+    "text": "5.1 项目回顾\n本项目完成了A股市场10只股票的数据获取、清洗、存储与分析工作，涵盖以下环节：",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>总结与结论</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html#项目回顾",
+    "href": "summary.html#项目回顾",
+    "title": "5  总结与结论",
+    "section": "",
+    "text": "5.1.1 数据获取\n\n股票数据：10只A股股票，覆盖银行、汽车、房地产、白酒、能源、通讯、物流等7个行业\n指数数据：沪深300、中证500\n宏观数据：CPI同比增速、M2同比增速\n财务数据：ROE、净利润率\n\n\n\n5.1.2 数据清洗\n完成了缺失值处理、日期格式统一、重复值删除、离群值标注等清洗工作，并实现了宽表与长表转换。\n\n\n5.1.3 数据存储\n同时使用CSV和Parquet格式存储数据，Parquet格式体积压缩率达58%。\n\n\n5.1.4 描述性统计\n计算了年化收益率、年化波动率、偏度、峰度、最大回撤等统计量，发现：\n\n比亚迪年化收益最高（30.31%）\n万科A年化收益最低（-17.99%）\n工商银行波动最小、回撤最小\n\n\n\n5.1.5 可视化分析\n绘制了5张专业图表：\n\n归一化收盘价走势图\n日收益率分布图\n相关系数热力图\nCPI与股市关系图\nBeta系数点图\n\n\n\n5.1.6 CAPM回归\n估计了10只股票的Beta系数，发现：\n\n3只股票β&gt;1（周期性）：比亚迪、五粮液、中兴通讯\n7只股票β≤1（防御性）：工商银行、中国石油等",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>总结与结论</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html#主要结论",
+    "href": "summary.html#主要结论",
+    "title": "5  总结与结论",
+    "section": "5.2 主要结论",
+    "text": "5.2 主要结论\n\n5.2.1 行业特征\n\n\n\n行业\n风险特征\n投资建议\n\n\n\n\n银行\n低β、低波动、低回撤\n防御性配置，稳健收益\n\n\n汽车\n高β、高波动\n牛市配置，风险较高\n\n\n白酒\nβ适中，收益稳健\n长期配置，消费龙头\n\n\n房地产\n收益为负，回撤大\n谨慎配置，关注政策\n\n\n能源\n低β，受外部因素影响\n分散化配置\n\n\n\n\n\n5.2.2 投资启示\n\n分散化投资：跨行业配置可以有效分散风险\n周期把握：牛市配置周期性股票，熊市配置防御性股票\n风险控制：关注最大回撤，设置止损点\n长期视角：龙头股长期表现更优\n\n\n\n5.2.3 方法论总结\n\n数据获取：akshare免费易用，适合学术研究和个人投资分析\n数据清洗：规范的数据清洗流程是分析质量的基础\n数据存储：Parquet格式适合大数据场景\n分析框架：CAPM是分析系统风险的有效工具",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>总结与结论</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html#局限性与展望",
+    "href": "summary.html#局限性与展望",
+    "title": "5  总结与结论",
+    "section": "5.3 局限性与展望",
+    "text": "5.3 局限性与展望\n\n5.3.1 局限性\n\n样本有限：仅10只股票，代表性有限\n时间范围：仅5年数据，未能覆盖完整经济周期\n模型简单：仅使用单因子CAPM模型\n宏观分析：仅分析了CPI一个宏观指标\n\n\n\n5.3.2 未来展望\n\n扩展样本：增加更多股票和行业\n多因子模型：引入Fama-French三因子等模型\n宏观分析：引入更多宏观经济变量\n机器学习：尝试机器学习方法预测收益",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>总结与结论</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html#附录",
+    "href": "summary.html#附录",
+    "title": "5  总结与结论",
+    "section": "5.4 附录",
+    "text": "5.4 附录\n\n5.4.1 代码仓库\n完整代码请访问：https://github.com/1197325514-cyber/dshw-p01\n\n\n5.4.2 参考资料\n\nakshare官方文档：https://akshare.akfamily.xyz/\npandas官方文档：https://pandas.pydata.org/\nstatsmodels官方文档：https://www.statsmodels.org/\n\n\n作者：林川胜 | 学号：25210071 | 课程：金融数据分析与建模 | 日期：2026年4月",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>总结与结论</span>"
+    ]
+  }
+]

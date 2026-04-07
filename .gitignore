@@ -41,4 +41,3 @@ env/
 
 /.quarto/
 **/*.quarto_ipynb
-docs/
