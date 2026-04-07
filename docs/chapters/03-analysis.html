@@ -206,8 +206,14 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../chapters/05-macro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">宏观指标对股票收益率的影响</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">总结与结论</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">总结与结论</span></span></a>
   </div>
 </li>
     </ul>
@@ -233,6 +239,7 @@ window.Quarto = {
   <li><a href="#图2日收益率分布图" id="toc-图2日收益率分布图" class="nav-link" data-scroll-target="#图2日收益率分布图"><span class="header-section-number">3.3.2</span> 图2：日收益率分布图</a></li>
   <li><a href="#图3收益率相关系数热力图" id="toc-图3收益率相关系数热力图" class="nav-link" data-scroll-target="#图3收益率相关系数热力图"><span class="header-section-number">3.3.3</span> 图3：收益率相关系数热力图</a></li>
   <li><a href="#图4cpi与股市关系" id="toc-图4cpi与股市关系" class="nav-link" data-scroll-target="#图4cpi与股市关系"><span class="header-section-number">3.3.4</span> 图4：CPI与股市关系</a></li>
+  <li><a href="#图5财务指标跨公司对比选做" id="toc-图5财务指标跨公司对比选做" class="nav-link" data-scroll-target="#图5财务指标跨公司对比选做"><span class="header-section-number">3.3.5</span> 图5：财务指标跨公司对比（选做）</a></li>
   </ul></li>
   <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">3.4</span> 小结</a></li>
   </ul>
@@ -538,6 +545,45 @@ window.Quarto = {
 <li><p><strong>局限性</strong>：相关性不等于因果关系，股市受多种因素影响</p></li>
 </ol>
 </section>
+<section id="图5财务指标跨公司对比选做" class="level3" data-number="3.3.5">
+<h3 data-number="3.3.5" class="anchored" data-anchor-id="图5财务指标跨公司对比选做"><span class="header-section-number">3.3.5</span> 图5：财务指标跨公司对比（选做）</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../output/fig5_roe_comparison.png" class="img-fluid figure-img"></p>
+<figcaption>ROE跨公司对比</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../output/fig5b_roe_trend.png" class="img-fluid figure-img"></p>
+<figcaption>ROE年度趋势</figcaption>
+</figure>
+</div>
+<p><strong>图5解读</strong>：</p>
+<ol type="1">
+<li><strong>行业ROE水平差异</strong>：
+<ul>
+<li>白酒行业（茅台、五粮液）：ROE水平最高，约25-35%，品牌溢价显著</li>
+<li>银行行业（招行、工行）：ROE稳定在10-15%，盈利模式成熟</li>
+<li>汽车行业（比亚迪、上汽）：比亚迪ROE波动大但上升趋势明显</li>
+<li>房地产行业（万科）：ROE逐年下降，反映行业困境</li>
+<li>能源行业（中国石油）：ROE相对较低，受油价影响大</li>
+</ul></li>
+<li><strong>行业趋势差异</strong>：
+<ul>
+<li>白酒：长期维持高ROE，护城河深厚</li>
+<li>新能源汽车（比亚迪）：ROE快速提升，行业景气度高</li>
+<li>传统汽车（上汽）：ROE下滑，面临转型压力</li>
+<li>银行：ROE稳定，但整体呈缓慢下降趋势</li>
+</ul></li>
+<li><strong>投资启示</strong>：
+<ul>
+<li>高ROE行业不一定有高股价表现，需结合估值分析</li>
+<li>ROE趋势比绝对值更重要，上升趋势代表行业景气</li>
+<li>不同行业ROE不可简单比较，需结合行业特性</li>
+</ul></li>
+</ol>
+</section>
 </section>
 <section id="小结" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="小结"><span class="header-section-number">3.4</span> 小结</h2>
@@ -548,6 +594,7 @@ window.Quarto = {
 <li>分析了收益率分布特征</li>
 <li>计算了股票间相关系数</li>
 <li>探讨了宏观指标与股市的关系</li>
+<li>分析了财务指标（ROE）的跨公司差异</li>
 </ol>
 <p>下一章将进行CAPM模型回归分析。</p>
 
@@ -1153,17 +1200,44 @@ window.Quarto = {
 <span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**局限性**：相关性不等于因果关系，股市受多种因素影响</span>
 <span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a><span class="fu">## 小结</span></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a><span class="fu">### 图5：财务指标跨公司对比（选做）</span></span>
 <span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>本章完成了以下分析工作：</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a><span class="al">![ROE跨公司对比](../output/fig5_roe_comparison.png)</span></span>
 <span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>计算了10只股票的描述性统计量</span>
-<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>绘制了归一化价格走势图</span>
-<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>分析了收益率分布特征</span>
-<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>计算了股票间相关系数</span>
-<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>探讨了宏观指标与股市的关系</span>
-<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>下一章将进行CAPM模型回归分析。</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="al">![ROE年度趋势](../output/fig5b_roe_trend.png)</span></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>**图5解读**：</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**行业ROE水平差异**：</span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>白酒行业（茅台、五粮液）：ROE水平最高，约25-35%，品牌溢价显著</span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>银行行业（招行、工行）：ROE稳定在10-15%，盈利模式成熟</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>汽车行业（比亚迪、上汽）：比亚迪ROE波动大但上升趋势明显</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>房地产行业（万科）：ROE逐年下降，反映行业困境</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>能源行业（中国石油）：ROE相对较低，受油价影响大</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**行业趋势差异**：</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>白酒：长期维持高ROE，护城河深厚</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>新能源汽车（比亚迪）：ROE快速提升，行业景气度高</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>传统汽车（上汽）：ROE下滑，面临转型压力</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>银行：ROE稳定，但整体呈缓慢下降趋势</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**投资启示**：</span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>高ROE行业不一定有高股价表现，需结合估值分析</span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>ROE趋势比绝对值更重要，上升趋势代表行业景气</span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>不同行业ROE不可简单比较，需结合行业特性</span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a><span class="fu">## 小结</span></span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>本章完成了以下分析工作：</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>计算了10只股票的描述性统计量</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>绘制了归一化价格走势图</span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>分析了收益率分布特征</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>计算了股票间相关系数</span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>探讨了宏观指标与股市的关系</span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>分析了财务指标（ROE）的跨公司差异</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>下一章将进行CAPM模型回归分析。</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

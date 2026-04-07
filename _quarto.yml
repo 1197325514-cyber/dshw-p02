@@ -12,6 +12,7 @@ book:
     - chapters/02-clean.qmd
     - chapters/03-analysis.qmd
     - chapters/04-capm.qmd
+    - chapters/05-macro.qmd
     - summary.qmd
 
 format:
