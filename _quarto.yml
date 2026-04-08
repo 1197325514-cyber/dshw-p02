@@ -10,6 +10,7 @@ book:
 
   sidebar:
     title: "DS Homework"
+    logo: images/book-front.jpg
     style: floating
     search: true
     background: light
@@ -44,6 +45,7 @@ book:
 
 format:
   html:
+    favicon: images/book-front.jpg
     theme:
       light: cosmo
       dark: darkly

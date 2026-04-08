@@ -238,6 +238,27 @@ figure figcaption {
   font-style: italic;
 }
 
+/* 首页封面图 */
+.cover-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 1.2rem 0 0.4rem 0;
+}
+
+.cover-wrap img {
+  max-width: 820px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+}
+
+.cover-caption {
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.92rem;
+  margin-bottom: 1.5rem;
+}
+
 /* -------------------- Callout样式 -------------------- */
 
 .callout {
