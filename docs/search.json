@@ -54,7 +54,7 @@
     "href": "index.html#github仓库",
     "title": "P01：金融数据获取、管理与初步分析",
     "section": "GitHub仓库",
-    "text": "GitHub仓库\n项目代码：https://github.com/1197325514-cyber/dshw-p01",
+    "text": "GitHub仓库\n项目代码：https://github.com/1197325514-cyber/dshw-p02",
     "crumbs": [
       "前言"
     ]
@@ -521,7 +521,7 @@
     "href": "summary.html#附录",
     "title": "6  总结与结论",
     "section": "6.4 附录",
-    "text": "6.4 附录\n\n6.4.1 代码仓库\n完整代码请访问：https://github.com/1197325514-cyber/dshw-p01\n\n\n6.4.2 在线电子书\nQuarto电子书：https://1197325514-cyber.github.io/dshw-p01/\n\n\n6.4.3 参考资料\n\nakshare官方文档：https://akshare.akfamily.xyz/\npandas官方文档：https://pandas.pydata.org/\nstatsmodels官方文档：https://www.statsmodels.org/\nQuarto官方文档：https://quarto.org/\n\n\n\n6.4.4 运行环境\n\n\n\n软件\n版本\n\n\n\n\nPython\n3.11+\n\n\nakshare\n1.10.0+\n\n\npandas\n2.0.0+\n\n\nnumpy\n1.24.0+\n\n\nmatplotlib\n3.7.0+\n\n\nseaborn\n0.12.0+\n\n\nstatsmodels\n0.14.0+\n\n\n\n\n作者：林川胜 | 学号：25210071 | 课程：金融数据分析与建模 | 日期：2026年4月",
+    "text": "6.4 附录\n\n6.4.1 代码仓库\n完整代码请访问：https://github.com/1197325514-cyber/dshw-p02\n\n\n6.4.2 在线电子书\nQuarto电子书：https://1197325514-cyber.github.io/dshw-p02/\n\n\n6.4.3 参考资料\n\nakshare官方文档：https://akshare.akfamily.xyz/\npandas官方文档：https://pandas.pydata.org/\nstatsmodels官方文档：https://www.statsmodels.org/\nQuarto官方文档：https://quarto.org/\n\n\n\n6.4.4 运行环境\n\n\n\n软件\n版本\n\n\n\n\nPython\n3.11+\n\n\nakshare\n1.10.0+\n\n\npandas\n2.0.0+\n\n\nnumpy\n1.24.0+\n\n\nmatplotlib\n3.7.0+\n\n\nseaborn\n0.12.0+\n\n\nstatsmodels\n0.14.0+\n\n\n\n\n作者：林川胜 | 学号：25210071 | 课程：金融数据分析与建模 | 日期：2026年4月",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>总结与结论</span>"
     ]

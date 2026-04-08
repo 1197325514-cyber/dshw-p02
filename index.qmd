@@ -76,7 +76,7 @@
 
 ## GitHub仓库
 
-项目代码：https://github.com/1197325514-cyber/dshw-p01
+项目代码：https://github.com/1197325514-cyber/dshw-p02
 
 ## 如何使用本书
 

@@ -82,7 +82,7 @@
 ## 项目结构
 
 ```
-dshw-p01/
+dshw-p02/
 ├── README.md                    # 项目说明
 ├── requirements.txt             # 依赖库列表
 ├── .gitignore                   # Git忽略配置
@@ -225,13 +225,13 @@ quarto render
 
 ## GitHub仓库
 
-https://github.com/1197325514-cyber/dshw-p01
+https://github.com/1197325514-cyber/dshw-p02
 
 ## 在线电子书
 
 本项目已发布为Quarto在线电子书：
 
-**https://1197325514-cyber.github.io/dshw-p01/**
+**https://1197325514-cyber.github.io/dshw-p02/**
 
 电子书包含完整的目录导航、各章节标题、图表和分析文字，排版整洁，便于阅读。
 
